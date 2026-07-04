@@ -1,10 +1,10 @@
 :root {
   --ink: #1f2937;
   --muted: #6b7280;
-  --line: #e5e7eb;
-  --brand: #2563eb;
-  --brand-dark: #1d4ed8;
-  --bg: #f8fafc;
+  --line: #ecdfd1;
+  --brand: #d9491f;
+  --brand-dark: #b23a17;
+  --bg: #faf5ec;
   --card: #ffffff;
   --good: #16a34a;
   --bad: #dc2626;
@@ -36,13 +36,13 @@ body {
   align-items: center;
   justify-content: space-between;
 }
-.brand { font-weight: 600; font-size: 14px; color: var(--muted); }
+.logo { height: 42px; width: auto; border-radius: 6px; display: block; }
 .timer-badge {
   font-variant-numeric: tabular-nums;
   font-weight: 700;
   padding: 4px 10px;
   border-radius: 999px;
-  background: #eff6ff;
+  background: #fbe8de;
   color: var(--brand-dark);
   font-size: 13px;
 }
@@ -84,7 +84,7 @@ input.inline-blank {
   border: none;
   border-bottom: 2px solid var(--brand);
   border-radius: 0;
-  background: #eff6ff;
+  background: #fbe8de;
   font-size: 15px;
 }
 
@@ -126,7 +126,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 }
 .option:hover { border-color: var(--brand); }
 .option input { accent-color: var(--brand); }
-.option.selected { border-color: var(--brand); background: #eff6ff; }
+.option.selected { border-color: var(--brand); background: #fbe8de; }
 
 .tf-row { display: flex; gap: 10px; }
 .tf-row .option { flex: 1; justify-content: center; }
