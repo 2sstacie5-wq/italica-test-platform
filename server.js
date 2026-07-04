@@ -47,6 +47,18 @@ app.get("/api/test", (req, res) => {
   res.json(publicTestView());
 });
 
+// Safari registra spesso in mp4/aac invece di webm/opus: teniamo traccia del
+// mimetype reale di ogni file per poterlo servire con il Content-Type corretto,
+// altrimenti l'audio non si riproduce nel browser.
+function extFromMimetype(mimetype) {
+  if (!mimetype) return "webm";
+  if (mimetype.includes("mp4")) return "mp4";
+  if (mimetype.includes("aac")) return "aac";
+  if (mimetype.includes("ogg")) return "ogg";
+  if (mimetype.includes("wav")) return "wav";
+  return "webm";
+}
+
 // ---------- Upload audio (risposte orali) ----------
 const uploadRoot = path.join(store.DATA_DIR, "audio");
 const storage = multer.diskStorage({
@@ -58,7 +70,7 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const safe = file.fieldname.replace(/[^a-z0-9_]/gi, "");
-    cb(null, `${safe}.webm`);
+    cb(null, `${safe}.${extFromMimetype(file.mimetype)}`);
   },
 });
 const upload = multer({ storage, limits: { fileSize: 25 * 1024 * 1024 } });
@@ -88,7 +100,8 @@ app.post("/api/submit", upload.fields(oralFields), (req, res) => {
     testData.finalProduction.oral.forEach((o) => {
       const field = `oral_${o.id}`;
       if (req.files && req.files[field] && req.files[field][0]) {
-        audioFiles[o.id] = `${submissionId}/${field}.webm`;
+        const f = req.files[field][0];
+        audioFiles[o.id] = { filename: f.filename, mimetype: f.mimetype };
       }
     });
 
@@ -166,9 +179,13 @@ app.get("/api/admin/submissions/:id", (req, res) => {
   });
 });
 
-app.get("/api/admin/audio/:id/:field", (req, res) => {
-  const filePath = path.join(uploadRoot, req.params.id, `${req.params.field}.webm`);
+app.get("/api/admin/audio/:id/:oid", (req, res) => {
+  const sub = store.getSubmission(req.params.id);
+  if (!sub || !sub.audioFiles || !sub.audioFiles[req.params.oid]) return res.status(404).end();
+  const info = sub.audioFiles[req.params.oid];
+  const filePath = path.join(uploadRoot, req.params.id, info.filename);
   if (!fs.existsSync(filePath)) return res.status(404).end();
+  res.setHeader("Content-Type", info.mimetype || "application/octet-stream");
   res.sendFile(filePath);
 });
 
