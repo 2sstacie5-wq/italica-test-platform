@@ -7,7 +7,7 @@ module.exports = {
     title: "Test di fine corso A1",
     totalPoints: 100,
     passPercent: 60,
-    writtenDurationMin: 60,
+    writtenDurationMin: 90,
   },
 
   parts: [
