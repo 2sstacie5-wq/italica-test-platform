@@ -73,26 +73,47 @@ function renderStart() {
   setProgress(0);
   appEl.innerHTML = `
     <div class="card">
-      <h1>${state.test.meta.title}</h1>
+      <h1>🇮🇹 Test LIVELLO A1</h1>
+      <p class="lead">Ciao ciao!</p>
+      <p class="lead">Простір <strong>italica</strong> вітає тебе на фінальному тестуванні курсу A1.</p>
       <p class="lead">
-        Письмова частина тесту (Частини 1–7) триває приблизно ${state.test.meta.writtenDurationMin} хвилин,
-        з таймером на кожну частину. Після письмової частини йдуть письмова та усна продукція
-        (з голосовим записом) — вони не обмежені за часом, але відповідай уважно і повністю.
-        Для усної частини сайт запитає дозвіл на використання мікрофона.
+        Перш за все — видихни. Це не іспит, який має тебе налякати, а можливість побачити,
+        скільки нового ти вже вивчив(ла) за цей курс. Згадай свій перший урок: тоді багато
+        речей здавалися складними, а зараз ти вже можеш читати, говорити, слухати та будувати
+        речення італійською. І це справді велике досягнення!
       </p>
+      <p class="lead"><strong>Як проходитиме тест?</strong></p>
+      <p class="lead">Він складається з 7 розділів і триває приблизно ${state.test.meta.writtenDurationMin} хвилин.</p>
+      <p class="lead">
+        Після цього на тебе чекатимуть: письмова частина, де потрібно буде самостійно написати
+        текст; усна частина, під час якої потрібно буде записати голосову відповідь. Перед
+        початком сайт попросить дозвіл на використання мікрофона.
+      </p>
+      <p class="lead">Уважно читай завдання, подумай над відповіддю і лише тоді переходь далі.</p>
+      <p class="lead"><strong>Перед початком</strong></p>
+      <p class="lead">
+        ✔️ знайди спокійне місце, де тебе ніхто не відволікатиме;<br />
+        ✔️ переконайся, що інтернет працює стабільно;<br />
+        ✔️ підготуйся морально — ти вже знаєш набагато більше, ніж тобі здається.
+      </p>
+      <p class="lead">
+        ❤️ Бажаємо тобі успіху! Довіряй своїм знанням, не хвилюйся через окремі запитання і
+        пам'ятай: цей тест — не про ідеальність, а про твій прогрес.
+      </p>
+      <p class="lead"><em>In bocca al lupo!</em> 🇮🇹</p>
       <div class="field">
-        <label for="studentName">Nome e cognome</label>
-        <input type="text" id="studentName" placeholder="Es. Anna Rossi" />
+        <label for="studentName">Ім'я та прізвище</label>
+        <input type="text" id="studentName" placeholder="Напр. Ганна Ковальська" />
       </div>
       <div class="actions end">
-        <button class="btn-primary" id="startBtn">Inizia il test</button>
+        <button class="btn-primary" id="startBtn">Почати тест</button>
       </div>
     </div>
   `;
   document.getElementById("startBtn").addEventListener("click", () => {
     const name = document.getElementById("studentName").value.trim();
     if (!name) {
-      alert("Per favore, scrivi il tuo nome e cognome prima di iniziare.");
+      alert("Будь ласка, напиши своє ім'я та прізвище перед початком.");
       return;
     }
     state.studentName = name;
