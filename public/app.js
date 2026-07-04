@@ -12,13 +12,16 @@ const state = {
   finalWritten: { w1: "", w2: "", w3: "" },
   audioBlobs: {}, // { o1: Blob, o2: Blob, o3: Blob }
   timer: null,
+  writtenTimerStarted: false, // timer unico per tutta la parte scritta (Parti 1-7)
   submitting: false,
   result: null,
 };
 
+// Ordine dei passi: 7 parti scritte -> produzione scritta -> produzione orale -> invio
 function totalSteps() {
   return state.test.parts.length + 2;
 }
+function stepIndexForPart(i) { return i; }
 
 async function init() {
   try {
@@ -64,6 +67,7 @@ function startTimer(minutes, onExpire) {
   state.timer = setInterval(tick, 1000);
 }
 
+// ---------------------------------------------------------------- START ----
 function renderStart() {
   clearTimer();
   setProgress(0);
@@ -71,10 +75,10 @@ function renderStart() {
     <div class="card">
       <h1>${state.test.meta.title}</h1>
       <p class="lead">
-        Il test scritto (Parte 1–7) dura circa ${state.test.meta.writtenDurationMin} minuti in totale,
-        con un timer per ogni parte. Dopo la parte scritta seguono la produzione scritta e la
-        produzione orale (con registrazione vocale) — non sono cronometrate, ma rispondi con calma
-        e in modo completo. Per la parte orale ti verrà chiesto il permesso di usare il microfono.
+        Письмова частина тесту (Частини 1–7) триває приблизно ${state.test.meta.writtenDurationMin} хвилин,
+        з таймером на кожну частину. Після письмової частини йдуть письмова та усна продукція
+        (з голосовим записом) — вони не обмежені за часом, але відповідай уважно і повністю.
+        Для усної частини сайт запитає дозвіл на використання мікрофона.
       </p>
       <div class="field">
         <label for="studentName">Nome e cognome</label>
@@ -96,6 +100,7 @@ function renderStart() {
   });
 }
 
+// ---------------------------------------------------------------- PARTS ----
 function renderPart(index) {
   state.step = `part:${index}`;
   const part = state.test.parts[index];
@@ -129,7 +134,16 @@ function renderPart(index) {
     if (index > 0) renderPart(index - 1);
   });
 
-  startTimer(part.durationMin, () => goToNextPart(index));
+  // Un unico timer per tutta la parte scritta (Parti 1-7): parte una sola volta
+  // all'inizio e continua a scorrere mentre lo studente passa da una parte
+  // all'altra (avanti o indietro), invece di ripartire ogni volta da zero.
+  if (!state.writtenTimerStarted) {
+    state.writtenTimerStarted = true;
+    startTimer(state.test.meta.writtenDurationMin, () => {
+      alert("Il tempo per la parte scritta è terminato. Si passa alla produzione scritta.");
+      renderWritten();
+    });
+  }
 }
 
 function goToNextPart(index) {
@@ -250,6 +264,7 @@ function renderOpen(part) {
 }
 
 function attachPartHandlers(part) {
+  // Ripristina eventuali risposte già date tornando indietro
   if (part.type === "mc") {
     part.items.forEach((item) => {
       const saved = state.answers.p1[item.id];
@@ -335,6 +350,7 @@ function refreshSelectedStyles() {
   });
 }
 
+// ---------------------------------------------------------- WRITTEN PROD ----
 function renderWritten() {
   state.step = "written";
   clearTimer();
@@ -370,6 +386,7 @@ function renderWritten() {
   document.getElementById("nextBtn").addEventListener("click", () => renderOral());
 }
 
+// ----------------------------------------------------------- ORAL PROD -----
 let activeStream = null;
 let activeRecorder = null;
 
@@ -485,6 +502,7 @@ function showPlayer(oid, blob) {
   document.querySelector(`button[data-action="record"][data-oid="${oid}"]`).textContent = "🎙️ Rifai la registrazione";
 }
 
+// --------------------------------------------------------------- SUBMIT ----
 async function submitTest() {
   if (state.submitting) return;
 
