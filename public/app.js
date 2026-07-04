@@ -1,4 +1,4 @@
-// App лато студента: нессуна библіотека зовнішня, лише DOM + fetch + MediaRecorder.
+// App lato studente: nessuna libreria esterna, solo DOM + fetch + MediaRecorder.
 
 const appEl = document.getElementById("app");
 const progressFill = document.getElementById("progressFill");
@@ -423,6 +423,26 @@ function renderOral() {
   document.getElementById("submitBtn").addEventListener("click", submitTest);
 }
 
+// Safari registra in un formato diverso da Chrome/Firefox (spesso mp4/aac invece di
+// webm/opus). Se etichettiamo il blob con un tipo sbagliato, l'audio non si riproduce
+// per niente (anche se i byte sono corretti). Qui rileviamo il formato realmente
+// supportato dal browser prima di iniziare la registrazione.
+function pickMimeType() {
+  const candidates = [
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/mp4",
+    "audio/aac",
+    "audio/ogg;codecs=opus",
+  ];
+  if (window.MediaRecorder && MediaRecorder.isTypeSupported) {
+    for (const type of candidates) {
+      if (MediaRecorder.isTypeSupported(type)) return type;
+    }
+  }
+  return ""; // lascia scegliere il browser (fallback)
+}
+
 async function startRecording(oid) {
   try {
     activeStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -431,10 +451,14 @@ async function startRecording(oid) {
     return;
   }
   const chunks = [];
-  activeRecorder = new MediaRecorder(activeStream);
-  activeRecorder.ondataavailable = (e) => chunks.push(e.data);
+  const preferredType = pickMimeType();
+  activeRecorder = preferredType ? new MediaRecorder(activeStream, { mimeType: preferredType }) : new MediaRecorder(activeStream);
+  const actualMimeType = activeRecorder.mimeType || preferredType || "audio/webm";
+  activeRecorder.ondataavailable = (e) => {
+    if (e.data && e.data.size > 0) chunks.push(e.data);
+  };
   activeRecorder.onstop = () => {
-    const blob = new Blob(chunks, { type: "audio/webm" });
+    const blob = new Blob(chunks, { type: actualMimeType });
     state.audioBlobs[oid] = blob;
     showPlayer(oid, blob);
     activeStream.getTracks().forEach((t) => t.stop());
@@ -484,7 +508,8 @@ async function submitTest() {
   formData.append("answers", JSON.stringify(state.answers));
   formData.append("finalWritten", JSON.stringify(state.finalWritten));
   Object.entries(state.audioBlobs).forEach(([oid, blob]) => {
-    formData.append(`oral_${oid}`, blob, `${oid}.webm`);
+    const ext = extFromMimeType(blob.type);
+    formData.append(`oral_${oid}`, blob, `${oid}.${ext}`);
   });
 
   try {
@@ -521,6 +546,14 @@ function renderDone() {
       </p>
     </div>
   `;
+}
+
+function extFromMimeType(mime) {
+  if (!mime) return "webm";
+  if (mime.includes("mp4")) return "mp4";
+  if (mime.includes("aac")) return "aac";
+  if (mime.includes("ogg")) return "ogg";
+  return "webm";
 }
 
 function escapeHtml(str) {
