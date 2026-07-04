@@ -141,7 +141,7 @@ async function renderDetail(id) {
           <div class="qtext">${o.text}</div>
           ${
             hasAudio
-              ? `<audio controls src="/api/admin/audio/${submission.id}/oral_${o.id}"></audio>`
+              ? `<audio controls src="/api/admin/audio/${submission.id}/${o.id}"></audio>`
               : `<p class="muted">Nessuna registrazione ricevuta.</p>`
           }
         </div>`;
