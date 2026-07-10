@@ -1,7 +1,6 @@
 // Contenuto del test A1 (con chiave di correzione).
 // QUESTO FILE NON VA MAI SERVITO AL CLIENT COSÌ COM'È: server.js rimuove le risposte
 // corrette prima di inviare i dati allo studente.
-
 module.exports = {
   meta: {
     title: "Test di fine corso A1",
@@ -9,7 +8,6 @@ module.exports = {
     passPercent: 60,
     writtenDurationMin: 90,
   },
-
   parts: [
     // ---------------- PARTE 1 — Scelta multipla ----------------
     {
@@ -37,7 +35,7 @@ module.exports = {
         { id: "q16", group: "Verbi modali", text: "Noi non ___ venire alla festa perché ___ studiare.", options: { a: "possiamo / dobbiamo", b: "potete / dobbiamo", c: "dobbiamo / possiamo" }, correct: "a" },
         { id: "q17", group: "Verbi modali", text: "Ragazzi, ___ (volere) un caffè?", options: { a: "vogliono", b: "volete", c: "vuoi" }, correct: "b" },
         { id: "q18", group: "Tempo libero", text: "Nel tempo libero preferisco un’attività rilassante, come ___.", options: { a: "rispondere alle email", b: "fare la fila in banca", c: "fare yoga" }, correct: "c" },
-        { id: "q19", group: "Verbi riflessivi", text: "Noi ___ (vestirsi) sempre in fretta perché siamo in ritardo.", options: { a: "ci vestiamo / siamo", b: "vi vestite / siamo", c: "ci vestiamo / abbiamo" }, correct: "a" },
+        { id: "q19", group: "Verbi riflessivi", text: "Noi ___ (vestirsi) sempre in fretta perché ___ (essere) in ritardo.", options: { a: "ci vestiamo / siamo", b: "vi vestite / siamo", c: "ci vestiamo / abbiamo" }, correct: "a" },
         { id: "q20", group: "Verbi riflessivi", text: "Tu a che ora ___ (addormentarsi) di solito la sera?", options: { a: "ti addormenta", b: "si addormenta", c: "ti addormenti" }, correct: "c" },
         { id: "q21", group: "Le ore", text: "Sono le ___ (13:45).", options: { a: "due meno un quarto", b: "una e quarantacinque", c: "entrambe le risposte sono corrette" }, correct: "a" },
         { id: "q22", group: "La famiglia", text: "La moglie di mio zio è ___.", options: { a: "la mia zia", b: "mia zia", c: "mio zio" }, correct: "b" },
@@ -55,7 +53,6 @@ module.exports = {
         { id: "q34", group: "Passato prossimo", text: "Le mie amiche ___ (partire) ieri mattina per Parigi.", options: { a: "hanno partito", b: "sono partite", c: "sono partito" }, correct: "b" },
       ],
     },
-
     // ---------------- PARTE 2 — Vero o Falso ----------------
     {
       id: "p2",
@@ -74,7 +71,6 @@ module.exports = {
         { id: "q8", text: "Il \"cappotto\" si porta di solito in estate, quando fa caldo.", correct: false },
       ],
     },
-
     // ---------------- PARTE 3 — Abbinamento ----------------
     {
       id: "p3",
@@ -104,7 +100,6 @@ module.exports = {
       },
       correct: { q1: "d", q2: "b", q3: "g", q4: "f", q5: "c", q6: "h", q7: "e", q8: "a" },
     },
-
     // ---------------- PARTE 4 — Riordina le parole ----------------
     {
       id: "p4",
@@ -120,7 +115,6 @@ module.exports = {
         { id: "q5", words: "dobbiamo / stasera / studiare / noi", accepted: ["stasera noi dobbiamo studiare", "noi dobbiamo studiare stasera"] },
       ],
     },
-
     // ---------------- PARTE 5 — Completa le frasi ----------------
     {
       id: "p5",
@@ -153,10 +147,10 @@ module.exports = {
           id: "5C",
           title: "Pronomi (diretti, indiretti, piacere)",
           items: [
-            { id: "q1", text: "Vado ___ vacanza ogni anno perché ___ piace molto viaggiare.", blanks: [{ accepted: ["in"] }, { accepted: ["mi"] }] },
+            { id: "q1", text: "Vado in vacanza ogni anno perché ___ piace molto viaggiare.", blanks: [{ accepted: ["mi"] }] },
             { id: "q2", text: "Bevi molta acqua? ___ bevo almeno 2 litri al giorno.", blanks: [{ accepted: ["ne"] }] },
             { id: "q3", text: "Compri il pane? Sì, ___ compro.", blanks: [{ accepted: ["lo"] }] },
-            { id: "q4", text: "Vi piace leggere? Si, ___ piace leggere.", blanks: [{ accepted: ["ci"] }] },
+            { id: "q4", text: "Vi piace leggere? Sì, ___ piace leggere.", blanks: [{ accepted: ["ci"] }] },
           ],
         },
         {
@@ -171,7 +165,6 @@ module.exports = {
         },
       ],
     },
-
     // ---------------- PARTE 6 — Completa il testo ----------------
     {
       id: "p6",
@@ -180,7 +173,7 @@ module.exports = {
       durationMin: 10,
       pointsPerBlank: 1,
       template:
-        "Mi chiamo Anna. Ogni giorno (1. svegliarsi) {{1}} alle sette, (2. fare) {{2}} colazione e (3. prendere) {{3}} un caffè al bar. Di solito (4. andare) {{4}} al lavoro in autobus e (5. tornare) {{5}} a casa verso le sei. Ieri, però, non (6. andare) {{6}} al lavoro perché (7. avere) {{7}} il mal di testa. Per questo motivo, (8. prendere) {{8}} un giorno libero e (9. dormire) {{9}} molto. La sera mio marito mi (10. portare) {{10}} una minestra calda. Oggi (11. stare) {{11}} meglio e domani (12. tornare) {{12}} al lavoro.",
+        "Mi chiamo Anna. Ogni giorno (1. svegliarsi) {{1}} alle sette, (2. fare) {{2}} colazione e (3. prendere) {{3}} un caffè al bar. Di solito (4. andare) {{4}} al lavoro in autobus e (5. tornare) {{5}} a casa verso le sei. Ieri, però, non (6. andare) {{6}} al lavoro perché (7. avere) {{7}} mal di testa. Per questo motivo, (8. prendere) {{8}} un giorno libero e (9. dormire) {{9}} molto. La sera mio marito mi (10. portare) {{10}} una minestra calda. Oggi (11. stare) {{11}} meglio e domani (12. tornare) {{12}} al lavoro.",
       blanks: [
         { id: "1", accepted: ["mi sveglio"] },
         { id: "2", accepted: ["faccio"] },
@@ -196,7 +189,6 @@ module.exports = {
         { id: "12", accepted: ["torno"] },
       ],
     },
-
     // ---------------- PARTE 7 — Continua la frase (valutazione manuale) ----------------
     {
       id: "p7",
@@ -215,15 +207,16 @@ module.exports = {
       ],
     },
   ],
-
   // Valutata separatamente dall'insegnante, non rientra nei 100 punti ma è obbligatoria per il certificato
   finalProduction: {
     title: "Parte finale — Produzione orale / scritta",
+    writtenInstructions: "Scegli UNO dei seguenti argomenti e scrivi (6-8 frasi).",
     written: [
       { id: "w1", text: "Scrivi un messaggio a un amico per invitarlo a fare qualcosa insieme questo weekend (dove, quando, cosa volete fare). (6-8 frasi)" },
       { id: "w2", text: "Descrivi la tua casa: le stanze, i mobili e cosa ti piace di più della tua casa. (6–8 frasi)" },
       { id: "w3", text: "Racconta come hai passato la giornata di ieri (usa il passato prossimo: cosa hai fatto, dove sei andato/a, con chi). (6–8 frasi)" },
     ],
+    oralInstructions: "Scegli UNO dei seguenti argomenti e parla (6-8 frasi).",
     oral: [
       { id: "o1", text: "Parla della tua famiglia: quante persone ci sono, chi sono, quanti anni hanno e cosa gli piace fare. (6-8 frasi)" },
       { id: "o2", text: "Descrivi la tua giornata tipica: a che ora ti svegli, cosa fai la mattina, il pomeriggio e la sera. Usa i verbi riflessivi e le ore. (6–8 frasi)" },
