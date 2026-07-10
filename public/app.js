@@ -75,30 +75,30 @@ function renderStart() {
     <div class="card">
       <h1>🇮🇹 Test LIVELLO A1</h1>
       <p class="lead">Ciao ciao!</p>
-      <p class="lead">Простір <strong>italica</strong> вітає тебе на фінальному тестуванні курсу A1.</p>
+      <p class="lead">Простір <strong>italica</strong> вітає тебе на фінальному тестуванні курсу A1!</p>
       <p class="lead">
-        Перш за все — видихни. Це не іспит, який має тебе налякати, а можливість побачити,
-        скільки нового ти вже вивчив(ла) за цей курс. Згадай свій перший урок: тоді багато
-        речей здавалися складними, а зараз ти вже можеш читати, говорити, слухати та будувати
-        речення італійською. І це справді велике досягнення!
+        Перш за все — видихни 😌 Це не іспит, який має тебе злякати, а шанс подивитися на себе
+        збоку і зрозуміти, скільки всього ти вже вмієш. Згадай свій перший урок: тоді навіть
+        "Come ti chiami?" здавалося космічною фізикою, а зараз ти читаєш, слухаєш, говориш і
+        будуєш речення італійською. Це реально крутий шлях, і ти вже на фініші!
       </p>
       <p class="lead"><strong>Як проходитиме тест?</strong></p>
-      <p class="lead">Він складається з 7 розділів і триває приблизно ${state.test.meta.writtenDurationMin} хвилин.</p>
+      <p class="lead">Він складається з 7 частин і займе приблизно ${state.test.meta.writtenDurationMin} хвилин.</p>
       <p class="lead">
-        Після цього на тебе чекатимуть: письмова частина, де потрібно буде самостійно написати
-        текст; усна частина, під час якої потрібно буде записати голосову відповідь. Перед
-        початком сайт попросить дозвіл на використання мікрофона.
+        Далі на тебе чекають ще дві частини: письмова — де треба самостійно написати текст, і
+        усна — де треба записати голосову відповідь. Перед початком сайт попросить дозвіл на
+        мікрофон, це нормально, нічого страшного 🎙️
       </p>
-      <p class="lead">Уважно читай завдання, подумай над відповіддю і лише тоді переходь далі.</p>
+      <p class="lead">Читай завдання уважно, подумай над відповіддю — і тільки тоді рухайся далі. Поспіх тут не потрібен.</p>
       <p class="lead"><strong>Перед початком</strong></p>
       <p class="lead">
-        ✔️ знайди спокійне місце, де тебе ніхто не відволікатиме;<br />
-        ✔️ переконайся, що інтернет працює стабільно;<br />
-        ✔️ підготуйся морально — ти вже знаєш набагато більше, ніж тобі здається.
+        ✔️ знайди спокійне місце, де тебе ніхто не смикатиме;<br />
+        ✔️ переконайся, що інтернет не підведе в найважливіший момент;<br />
+        ✔️ видихни ще раз — ти знаєш набагато більше, ніж тобі здається.
       </p>
       <p class="lead">
-        ❤️ Бажаємо тобі успіху! Довіряй своїм знанням, не хвилюйся через окремі запитання і
-        пам'ятай: цей тест — не про ідеальність, а про твій прогрес.
+        ❤️ Ми віримо в тебе! Не переживай через окремі запитання — цей тест не про ідеальність,
+        а про твій прогрес. А прогрес у тебе є, і чималий.
       </p>
       <p class="lead"><em>In bocca al lupo!</em> 🇮🇹</p>
       <div class="field">
@@ -377,10 +377,12 @@ function renderWritten() {
   clearTimer();
   setProgress(state.test.parts.length / totalSteps());
   const prompts = state.test.finalProduction.written;
+  const instructions = state.test.finalProduction.writtenInstructions || "";
   appEl.innerHTML = `
     <div class="card">
       <h2>Produzione scritta</h2>
       <p class="hint">Non cronometrata. Scrivi almeno 6-8 frasi per ogni punto.</p>
+      ${instructions ? `<p class="hint" style="color:#c0392b; font-weight:600;">${instructions}</p>` : ""}
       ${prompts
         .map(
           (p, i) => `
@@ -416,6 +418,7 @@ function renderOral() {
   clearTimer();
   setProgress((state.test.parts.length + 1) / totalSteps());
   const prompts = state.test.finalProduction.oral;
+  const instructions = state.test.finalProduction.oralInstructions || "";
   appEl.innerHTML = `
     <div class="card">
       <h2>Produzione orale</h2>
@@ -424,6 +427,7 @@ function renderOral() {
         rifare la registrazione quante volte vuoi prima di continuare. Il browser chiederà il
         permesso di usare il microfono.
       </p>
+      ${instructions ? `<p class="hint" style="color:#c0392b; font-weight:600;">${instructions}</p>` : ""}
       ${prompts
         .map(
           (p, i) => `
