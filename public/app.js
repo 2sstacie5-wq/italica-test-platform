@@ -73,7 +73,7 @@ function renderStart() {
   setProgress(0);
   appEl.innerHTML = `
     <div class="card">
-      <h1>🇮🇹 Test LIVELLO A1</h1>
+      <h1 style="color:#d9491f;">🇮🇹 Test LIVELLO A1</h1>
       <p class="lead">Ciao ciao!</p>
       <p class="lead">Простір <strong>italica</strong> вітає тебе на фінальному тестуванні курсу A1!</p>
       <p class="lead">
@@ -90,7 +90,7 @@ function renderStart() {
         мікрофон, це нормально, нічого страшного 🎙️
       </p>
       <p class="lead">Читай завдання уважно, подумай над відповіддю — і тільки тоді рухайся далі. Поспіх тут не потрібен.</p>
-      <p class="lead"><strong>Перед початком:</strong></p>
+      <p class="lead"><strong>Перед початком</strong></p>
       <div style="background:#fbe8de; border-radius:10px; padding:14px 16px; color:#b23a17;">
         знайди спокійне місце, де тебе ніхто не смикатиме;<br />
         переконайся, що інтернет не підведе в найважливіший момент;<br />
