@@ -24,7 +24,7 @@ module.exports = {
         { id: "q5", group: "Presente indicativo verbi regolari", text: "Tu a che ora ___ (finire) di lavorare di solito?", options: { a: "finisci", b: "finiscono", c: "finiamo" }, correct: "a" },
         { id: "q6", group: "Presente indicativo verbi irregolari", text: "Noi ___ (bere) sempre acqua ai pasti, loro invece ___ (bere) vino.", options: { a: "beviamo / bevono", b: "bevono / beviamo", c: "beviamo / bevete" }, correct: "a" },
         { id: "q7", group: "Presente indicativo verbi irregolari", text: "Voi ___ (uscire) stasera o restate a casa?", options: { a: "esci", b: "escite", c: "uscite" }, correct: "c" },
-        { id: "q8", group: "Andare / venire", text: "Noi ___ (andare) al mare domani, ma i nostri amici non ___.", options: { a: "andiamo / vengono", b: "andiamo / vanno", c: "vanno / andiamo" }, correct: "b" },
+        { id: "q8", group: "Andare / venire", text: "Noi ___ al mare domani, ma i nostri amici non ___.", options: { a: "andiamo / vengono", b: "andiamo / vanno", c: "vanno / andiamo" }, correct: "b" },
         { id: "q9", group: "Andare / venire", text: "Voi ___ (venire) alla festa sabato?", options: { a: "venite", b: "veniamo", c: "venire" }, correct: "a" },
         { id: "q10", group: "Preposizioni semplici", text: "Sono ___ Napoli, ma vivo ___ Firenze da tre anni.", options: { a: "da / a", b: "di / a", c: "a / da" }, correct: "b" },
         { id: "q11", group: "Preposizioni semplici", text: "Questo regalo è ___ mia sorella, non è ___ te.", options: { a: "per / per", b: "di / da", c: "a / di" }, correct: "a" },
@@ -41,7 +41,7 @@ module.exports = {
         { id: "q22", group: "La famiglia", text: "La moglie di mio zio è ___.", options: { a: "la mia zia", b: "mia zia", c: "mio zio" }, correct: "b" },
         { id: "q23", group: "La casa/preposizioni articolate", text: "Metto i piatti puliti ___.", options: { a: "nell’armadio", b: "nel armadio", c: "all’armadio" }, correct: "a" },
         { id: "q24", group: "Piacere + pronomi indiretti", text: "(A noi) ___ piacciono molto i film italiani.", options: { a: "vi", b: "gli", c: "ci" }, correct: "c" },
-        { id: "q25", group: "Piacere + pronomi indiretti", text: "___ piace svegliarsi presto la domenica.", options: { a: "non le piace", b: "non le piacciono", c: "le non piace" }, correct: "a" },
+        { id: "q25", group: "Piacere + pronomi indiretti", text: "___ svegliarsi presto la domenica.", options: { a: "non le piace", b: "non le piacciono", c: "le non piace" }, correct: "a" },
         { id: "q26", group: "Abbigliamento", text: "Per andare a un colloquio di lavoro è meglio indossare ___.", options: { a: "una tuta da ginnastica", b: "un completo elegante", c: "il costume da bagno" }, correct: "b" },
         { id: "q27", group: "Pronomi diretti", text: "Compri i biglietti per il concerto? Sì, ___ compro domani.", options: { a: "li", b: "le", c: "lo" }, correct: "a" },
         { id: "q28", group: "Pronomi diretti", text: "Inviti le tue amiche alla festa? Sì, ___ invito volentieri.", options: { a: "gli", b: "le", c: "la" }, correct: "b" },
@@ -210,13 +210,13 @@ module.exports = {
   // Valutata separatamente dall'insegnante, non rientra nei 100 punti ma è obbligatoria per il certificato
   finalProduction: {
     title: "Parte finale — Produzione orale / scritta",
-    writtenInstructions: "Scegli UNO dei seguenti argomenti e scrivi (6-8 frasi).",
+    writtenInstructions: "SCEGLI SOLO UN ARGOMENTO E SCRIVI (6-8 FRASI).",
     written: [
       { id: "w1", text: "Scrivi un messaggio a un amico per invitarlo a fare qualcosa insieme questo weekend (dove, quando, cosa volete fare). (6-8 frasi)" },
       { id: "w2", text: "Descrivi la tua casa: le stanze, i mobili e cosa ti piace di più della tua casa. (6–8 frasi)" },
       { id: "w3", text: "Racconta come hai passato la giornata di ieri (usa il passato prossimo: cosa hai fatto, dove sei andato/a, con chi). (6–8 frasi)" },
     ],
-    oralInstructions: "Scegli UNO dei seguenti argomenti e parla (6-8 frasi).",
+    oralInstructions: "SCEGLI SOLO UN ARGOMENTO E PARLA (6-8 FRASI).",
     oral: [
       { id: "o1", text: "Parla della tua famiglia: quante persone ci sono, chi sono, quanti anni hanno e cosa gli piace fare. (6-8 frasi)" },
       { id: "o2", text: "Descrivi la tua giornata tipica: a che ora ti svegli, cosa fai la mattina, il pomeriggio e la sera. Usa i verbi riflessivi e le ore. (6–8 frasi)" },
