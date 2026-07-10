@@ -92,9 +92,9 @@ function renderStart() {
       <p class="lead">Читай завдання уважно, подумай над відповіддю — і тільки тоді рухайся далі. Поспіх тут не потрібен.</p>
       <p class="lead"><strong>Перед початком</strong></p>
       <p class="lead">
-         знайди спокійне місце, де тебе ніхто не смикатиме;<br />
-         переконайся, що інтернет не підведе в найважливіший момент;<br />
-         видихни ще раз — ти знаєш набагато більше, ніж тобі здається.
+        ✔️ знайди спокійне місце, де тебе ніхто не смикатиме;<br />
+        ✔️ переконайся, що інтернет не підведе в найважливіший момент;<br />
+        ✔️ видихни ще раз — ти знаєш набагато більше, ніж тобі здається.
       </p>
       <p class="lead">
         ❤️ Ми віримо в тебе! Не переживай через окремі запитання — цей тест не про ідеальність,
@@ -418,7 +418,6 @@ function renderOral() {
   clearTimer();
   setProgress((state.test.parts.length + 1) / totalSteps());
   const prompts = state.test.finalProduction.oral;
-  const instructions = state.test.finalProduction.oralInstructions || "";
   appEl.innerHTML = `
     <div class="card">
       <h2>Produzione orale</h2>
@@ -427,7 +426,7 @@ function renderOral() {
         rifare la registrazione quante volte vuoi prima di continuare. Il browser chiederà il
         permesso di usare il microfono.
       </p>
-      ${instructions ? `<p class="hint" style="color:#c0392b; font-weight:600;">${instructions}</p>` : ""}
+      <p class="hint" style="color:#c0392b; font-weight:600;">Registra tutte e 3 le risposte, una per ogni argomento.</p>
       ${prompts
         .map(
           (p, i) => `
