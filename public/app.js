@@ -73,7 +73,7 @@ function renderStart() {
   setProgress(0);
   appEl.innerHTML = `
     <div class="card">
-      <h1 style="color:#d9491f;">🇮🇹 Test LIVELLO A1</h1>
+      <h1 style="color:#d9491f;">🇮🇹 Test di LIVELLO A1</h1>
       <p class="lead">Ciao ciao!</p>
       <p class="lead">Простір <strong>italica</strong> вітає тебе на фінальному тестуванні курсу A1!</p>
       <p class="lead">
