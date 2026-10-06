@@ -35,7 +35,7 @@ module.exports = {
     { id: "q12", level: "A2", text: "Quando eravate bambini, ___ spesso al mare?", options: ["andavate", "andavano", "andavamo", "siete andati"], correct: 0 },
     { id: "q13", level: "A2", text: "Voi ___ a Firenze in estate.", options: ["andrete", "andremo", "andranno", "andresti"], correct: 0 },
     { id: "q14", level: "A2", text: "Loro non ___ mai a Napoli.", options: ["sono stati", "hanno stati", "stavano", "saranno"], correct: 0 },
-    { id: "q15", level: "A2", text: "Mentre io cucinavo, voi ___ la televisione.", options: ["guardavate", "avete guardato", "guarderete", "guarderesti"], correct: 0 },
+    { id: "q15", level: "A2", text: "Mentre io cucinavo, voi ___ la televisione.", options: ["guardavate", "avete visto", "guardate", "guardaverete"], correct: 0 },
     { id: "q16", level: "A2", text: "Avete già comprato i biglietti? — Sì, ___ abbiamo comprati ieri.", options: ["li", "le", "ne", "gli"], correct: 0 },
     { id: "q17", level: "A2", text: "Avete bisogno di acqua? — Sì, ___ abbiamo bisogno.", options: ["ne", "la", "lo", "le"], correct: 0 },
     { id: "q18", level: "A2", text: "Voi ___ lavorare domani mattina?", options: ["dovete", "devono", "devi", "dobbiamo"], correct: 0 },
