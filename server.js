@@ -7,6 +7,7 @@ const crypto = require("crypto");
 const basicAuth = require("express-basic-auth");
 
 const testData = require("./test-data");
+const placementData = require("./placement-data");
 const { gradeSubmission } = require("./grading");
 const store = require("./store");
 
@@ -142,6 +143,71 @@ app.post("/api/submit", upload.fields(oralFields), (req, res) => {
   }
 });
 
+
+// ---------- Test rapido di livello (A1–C1, 15 minuti) ----------
+const LEVELS = ["A1", "A2", "B1", "B2", "C1"];
+
+function levelFromScore(score) {
+  const step = placementData.meta.scale.find((s) => score <= s.max);
+  return step ? step.level : placementData.meta.scale[placementData.meta.scale.length - 1].level;
+}
+
+app.get("/api/placement", (req, res) => {
+  res.json({
+    meta: { title: placementData.meta.title, durationMin: placementData.meta.durationMin },
+    items: placementData.items.map(({ id, level, text, options }) => ({ id, level, text, options })),
+  });
+});
+
+app.post("/api/placement/submit", (req, res) => {
+  try {
+    const body = req.body || {};
+    const studentName = String(body.studentName || "").trim().slice(0, 120) || "Studente senza nome";
+    const contact = String(body.contact || "").trim().slice(0, 120);
+    const answers = body.answers && typeof body.answers === "object" ? body.answers : {};
+
+    let score = 0;
+    const byLevel = {};
+    LEVELS.forEach((l) => (byLevel[l] = { correct: 0, total: 0 }));
+    const details = placementData.items.map((item) => {
+      const raw = answers[item.id];
+      const given = Number.isInteger(raw) && raw >= 0 && raw < item.options.length ? raw : null;
+      const ok = given === item.correct;
+      if (ok) score += 1;
+      byLevel[item.level].total += 1;
+      if (ok) byLevel[item.level].correct += 1;
+      return { id: item.id, level: item.level, given, correct: item.correct, ok };
+    });
+
+    const level = levelFromScore(score);
+    const borderline = placementData.meta.borderline.some(([a, b]) => score >= a && score <= b);
+    const result = {
+      id: crypto.randomUUID(),
+      studentName,
+      contact,
+      submittedAt: new Date().toISOString(),
+      durationSec: Math.max(0, Math.round(Number(body.durationSec) || 0)),
+      timedOut: !!body.timedOut,
+      score,
+      maxScore: placementData.items.length,
+      level,
+      borderline,
+      byLevel,
+      details,
+    };
+    store.addPlacement(result);
+
+    res.json(
+      placementData.meta.showResultToStudent
+        ? { ok: true, score, maxScore: result.maxScore, level, borderline }
+        : { ok: true }
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore del server durante il salvataggio." });
+  }
+});
+
 // ---------- Area insegnante (protetta da password) ----------
 const adminAuth = basicAuth({
   users: { [ADMIN_USER]: ADMIN_PASSWORD },
@@ -187,6 +253,18 @@ app.get("/api/admin/audio/:id/:oid", (req, res) => {
   if (!fs.existsSync(filePath)) return res.status(404).end();
   res.setHeader("Content-Type", info.mimetype || "application/octet-stream");
   res.sendFile(filePath);
+});
+
+app.get("/api/admin/placement", (req, res) => {
+  const rows = store.readPlacement().map(({ details, ...rest }) => rest);
+  rows.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+  res.json(rows);
+});
+
+app.get("/api/admin/placement/:id", (req, res) => {
+  const r = store.getPlacement(req.params.id);
+  if (!r) return res.status(404).json({ error: "Risultato non trovato." });
+  res.json({ result: r, items: placementData.items });
 });
 
 app.post("/api/admin/submissions/:id/review", (req, res) => {

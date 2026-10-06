@@ -50,4 +50,32 @@ function updateSubmission(id, patch) {
   return all[idx];
 }
 
-module.exports = { readAll, writeAll, addSubmission, getSubmission, updateSubmission, DATA_DIR };
+// ---------- Test rapido di livello: archivio separato ----------
+const PLACEMENT_FILE = path.join(DATA_DIR, "placement.json");
+
+function readPlacement() {
+  ensureDb();
+  if (!fs.existsSync(PLACEMENT_FILE)) return [];
+  try {
+    return JSON.parse(fs.readFileSync(PLACEMENT_FILE, "utf8"));
+  } catch (e) {
+    console.error("placement.json è corrotto:", e);
+    return [];
+  }
+}
+
+function addPlacement(result) {
+  const all = readPlacement();
+  all.push(result);
+  fs.writeFileSync(PLACEMENT_FILE, JSON.stringify(all, null, 2), "utf8");
+  return result;
+}
+
+function getPlacement(id) {
+  return readPlacement().find((r) => r.id === id);
+}
+
+module.exports = {
+  readAll, writeAll, addSubmission, getSubmission, updateSubmission, DATA_DIR,
+  readPlacement, addPlacement, getPlacement,
+};

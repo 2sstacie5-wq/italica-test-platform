@@ -7,8 +7,99 @@ function fmtDate(iso) {
 
 async function router() {
   const hash = location.hash.replace(/^#\/?/, "");
+  const isLivello = hash === "livello" || hash.startsWith("livello/");
+  document.getElementById("navA1").classList.toggle("active", !isLivello);
+  document.getElementById("navLivello").classList.toggle("active", isLivello);
+  if (hash === "livello") return renderPlacementList();
+  if (hash.startsWith("livello/")) return renderPlacementDetail(hash.slice("livello/".length));
   if (!hash) return renderList();
   return renderDetail(hash);
+}
+
+// ------------------------------------------------- TEST DI LIVELLO ------
+function fmtDuration(sec) {
+  return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+}
+
+async function renderPlacementList() {
+  appEl.innerHTML = `<div class="card"><h1>Test di livello</h1><p class="muted">Caricamento...</p></div>`;
+  const rows = await (await fetch("/api/admin/placement")).json();
+  const link = `${location.origin}/livello`;
+  const shareHtml = `<div class="share">Link per gli studenti: <a href="${link}" target="_blank">${link}</a></div>`;
+  if (rows.length === 0) {
+    appEl.innerHTML = `<div class="card"><h1>Test di livello</h1>${shareHtml}<p class="muted">Nessun risultato finora.</p></div>`;
+    return;
+  }
+  appEl.innerHTML = `
+    <div class="card">
+      <h1>Test di livello (${rows.length})</h1>
+      ${shareHtml}
+      <table>
+        <thead><tr><th>Studente</th><th>Contatto</th><th>Data</th><th>Punti</th><th>Livello</th><th>Tempo</th><th></th></tr></thead>
+        <tbody>
+          ${rows
+            .map(
+              (r) => `
+            <tr>
+              <td>${escapeHtml(r.studentName)}</td>
+              <td>${escapeHtml(r.contact || "—")}</td>
+              <td>${fmtDate(r.submittedAt)}</td>
+              <td>${r.score}/${r.maxScore}</td>
+              <td><span class="lvl">${r.level}</span>${r.borderline ? ` <span class="badge pending" title="Al confine tra due livelli: consigliato un colloquio orale">confine</span>` : ""}</td>
+              <td>${fmtDuration(r.durationSec)}${r.timedOut ? " ⏱" : ""}</td>
+              <td><a class="row-link" href="#/livello/${r.id}">Apri &rarr;</a></td>
+            </tr>`
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+async function renderPlacementDetail(id) {
+  appEl.innerHTML = `<p class="muted">Caricamento...</p>`;
+  const res = await fetch(`/api/admin/placement/${id}`);
+  if (!res.ok) {
+    appEl.innerHTML = `<div class="card">Risultato non trovato. <a href="#/livello">Torna alla lista</a></div>`;
+    return;
+  }
+  const { result: r, items } = await res.json();
+  const byId = {};
+  r.details.forEach((d) => (byId[d.id] = d));
+  const L = ["A", "B", "C", "D"];
+  appEl.innerHTML = `
+    <a class="back-link" href="#/livello">&larr; Tutti i risultati</a>
+    <div class="card">
+      <h1>${escapeHtml(r.studentName)}</h1>
+      <p class="muted">${escapeHtml(r.contact || "")}${r.contact ? " · " : ""}${fmtDate(r.submittedAt)}</p>
+      <div class="facts">
+        <div class="fact"><b>${r.level}</b>livello</div>
+        <div class="fact"><b>${r.score}/${r.maxScore}</b>risposte giuste</div>
+        <div class="fact"><b>${fmtDuration(r.durationSec)}</b>${r.timedOut ? "tempo scaduto" : "tempo impiegato"}</div>
+      </div>
+      ${r.borderline ? `<p class="badge pending" style="margin:0 0 14px">Al confine tra due livelli: consigliato un colloquio orale</p>` : ""}
+      <h2>Per livello</h2>
+      <div class="lvl-bars">
+        ${Object.entries(r.byLevel)
+          .map(
+            ([lvl, v]) => `<span class="lvl">${lvl}</span>
+          <span class="lvl-bar"><i style="width:${v.total ? (100 * v.correct) / v.total : 0}%"></i></span>
+          <span>${v.correct}/${v.total}</span>`
+          )
+          .join("")}
+      </div>
+    </div>
+    <div class="card">
+      <h2>Risposte</h2>
+      ${items
+        .map((it, n) => {
+          const d = byId[it.id] || { given: null, ok: false };
+          const given = d.given === null ? `<span class="muted">non risposto</span>` : `<span class="${d.ok ? "correct" : "wrong"}">${L[d.given]}) ${escapeHtml(it.options[d.given])}</span>`;
+          const right = d.ok ? "" : ` → <span class="correct">${L[it.correct]}) ${escapeHtml(it.options[it.correct])}</span>`;
+          return `<div class="qrow"><span class="lvl">${it.level}</span><div class="qtext"><b>${n + 1}.</b> ${escapeHtml(it.text)}<br>${given}${right}</div><span>${d.ok ? "✅" : "❌"}</span></div>`;
+        })
+        .join("")}
+    </div>`;
 }
 window.addEventListener("hashchange", router);
 
