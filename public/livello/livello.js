@@ -84,13 +84,12 @@ function renderStart() {
   appEl.innerHTML = `
     <div class="card">
       <h1 style="color:#d9491f;">🇮🇹 ТЕСТУВАННЯ від italica</h1>
-      <p class="lead">Ciao! Цей короткий тест допоможе зрозуміти, з якого рівня тобі найкраще почати навчання в <strong>italica</strong>.</p>
+      <p class="lead">Ciao ciao! Цей короткий тест допоможе зрозуміти, з якого рівня тобі найкраще почати навчання в <strong>italica</strong>.</p>
       <ul class="pl-steps">
         <li><strong>${test.items.length} питань</strong>, у кожному одна правильна відповідь;</li>
         <li>на все — <strong>${test.meta.durationMin} хвилин</strong>, таймер угорі;</li>
         <li>питання поступово стають складнішими — це нормально;</li>
-        <li>не знаєш відповіді — тисни <strong>«Не знаю»</strong>, не вгадуй;</li>
-        <li>без перекладачів і словників, будь ласка 🙂</li>
+        <li><strong>attenzione!</strong> це лише допоміжний інструмент і це не чітке визначення рівня!</li>
       </ul>
       <div class="field">
         <label for="studentName">Ім'я та прізвище</label>
