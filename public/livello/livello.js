@@ -83,7 +83,7 @@ function renderStart() {
   setProgress(0);
   appEl.innerHTML = `
     <div class="card">
-      <h1 style="color:#d9491f;">🇮🇹 Italica test</h1>
+      <h1 style="color:#d9491f;">🇮🇹 ТЕСТУВАННЯ від italica</h1>
       <p class="lead">Ciao! Цей короткий тест допоможе зрозуміти, з якого рівня тобі найкраще почати навчання в <strong>italica</strong>.</p>
       <ul class="pl-steps">
         <li><strong>${test.items.length} питань</strong>, у кожному одна правильна відповідь;</li>
