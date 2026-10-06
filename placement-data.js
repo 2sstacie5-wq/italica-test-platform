@@ -27,7 +27,7 @@ module.exports = {
     { id: "q5", level: "A1", text: "Mangi le caramelle? — Sì, ___ mangio.", options: ["le", "ne", "lo", "li"], correct: 0 },
     { id: "q6", level: "A1", text: "Loro ___ italiani, ma abitano in Germania.", options: ["sono", "è", "siete", "sei"], correct: 0 },
     { id: "q7", level: "A1", text: "Signora, ___ a Roma?", options: ["abita", "abiti", "abite", "abitare"], correct: 0 },
-    { id: "q8", level: "A1", text: "Ragazzi, ___ già pronti?", options: ["siete", "sono", "sei", "è"], correct: 0 },
+    { id: "q8", level: "A1", text: "Ragazzi, ___ stasera?", options: ["uscite", "escono", "esci", "uscita"], correct: 0 },
     { id: "q9", level: "A1", text: "Marco e Anna ___ una casa in centro.", options: ["hanno", "ha", "avete", "ho"], correct: 0 },
     { id: "q10", level: "A1", text: "Noi ___ al ristorante ogni venerdì.", options: ["andiamo", "andate", "vanno", "vai"], correct: 0 },
 
