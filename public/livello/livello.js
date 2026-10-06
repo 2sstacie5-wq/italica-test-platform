@@ -96,7 +96,7 @@ function renderStart() {
         <input type="text" id="studentName" autocomplete="name" placeholder="Напр. Ганна Ковальська" />
       </div>
       <div class="field">
-        <label for="contact">Телефон або Telegram</label>
+        <label for="contact">Telegram нікнейм чи номер телефону</label>
         <input type="text" id="contact" autocomplete="tel" placeholder="Щоб ми могли зв'язатися з тобою" />
       </div>
       <div class="actions end">
