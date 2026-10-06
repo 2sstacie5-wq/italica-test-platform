@@ -33,7 +33,7 @@ module.exports = {
 
     { id: "q11", level: "A2", text: "Ieri noi ___ al cinema.", options: ["siamo andati", "abbiamo andato", "andavamo", "andremo"], correct: 0 },
     { id: "q12", level: "A2", text: "Quando eravate bambini, ___ spesso al mare?", options: ["andavate", "andavano", "andavamo", "siete andati"], correct: 0 },
-    { id: "q13", level: "A2", text: "Domani voi ___ a Firenze.", options: ["andrete", "andremo", "andranno", "andresti"], correct: 0 },
+    { id: "q13", level: "A2", text: "Voi ___ a Firenze in estate.", options: ["andrete", "andremo", "andranno", "andresti"], correct: 0 },
     { id: "q14", level: "A2", text: "Loro non ___ mai a Napoli.", options: ["sono stati", "hanno stati", "stavano", "saranno"], correct: 0 },
     { id: "q15", level: "A2", text: "Mentre io cucinavo, voi ___ la televisione.", options: ["guardavate", "avete guardato", "guarderete", "guarderesti"], correct: 0 },
     { id: "q16", level: "A2", text: "Avete già comprato i biglietti? — Sì, ___ abbiamo comprati ieri.", options: ["li", "le", "ne", "gli"], correct: 0 },
