@@ -38,7 +38,7 @@ module.exports = {
     { id: "q15", level: "A2", text: "Mentre io cucinavo, voi ___ la televisione.", options: ["guardavate", "avete visto", "guardate", "guardaverete"], correct: 0 },
     { id: "q16", level: "A2", text: "Avete già comprato i biglietti? — Sì, ___ abbiamo comprati ieri.", options: ["li", "le", "ne", "gli"], correct: 0 },
     { id: "q17", level: "A2", text: "Lui è ___ mio padre.", options: ["—", "il", "lo", "l’"], correct: 0 },
-    { id: "q18", level: "A2", text: "Voi ___ lavorare domani mattina?", options: ["dovete", "devono", "devi", "dobbiamo"], correct: 0 },
+    { id: "q18", level: "A2", text: "Mi dispiace, oggi io non ___ aiutare.", options: ["ti posso", "posso ti", "ti puoi", "ti può"], correct: 0 },
     { id: "q19", level: "A2", text: "Queste scarpe sono ___ di quelle nere.", options: ["più comode", "molto comode", "la più comoda", "comodissime"], correct: 0 },
     { id: "q20", level: "A2", text: "Abbiamo organizzato una festa ___ i nostri amici.", options: ["per", "da", "di", "su"], correct: 0 },
 
