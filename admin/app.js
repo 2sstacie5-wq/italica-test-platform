@@ -141,7 +141,8 @@ async function renderDetail(id) {
           <div class="qtext">${o.text}</div>
           ${
             hasAudio
-              ? `<audio controls src="/api/admin/audio/${submission.id}/${o.id}"></audio>`
+              ? `<audio controls preload="metadata" src="/api/admin/audio/${submission.id}/${o.id}"></audio>
+                 <div><a class="muted" href="/api/admin/audio/${submission.id}/${o.id}" download="${escapeHtml(submission.studentName || "studente")}_${o.id}.${(submission.audioFiles[o.id].filename || "").split(".").pop() || "webm"}">⬇ Scarica la registrazione</a></div>`
               : `<p class="muted">Nessuna registrazione ricevuta.</p>`
           }
         </div>`;

@@ -410,8 +410,6 @@ function renderWritten() {
 }
 
 // ----------------------------------------------------------- ORAL PROD -----
-let activeStream = null;
-let activeRecorder = null;
 
 function renderOral() {
   state.step = "oral";
@@ -460,67 +458,234 @@ function renderOral() {
       .addEventListener("click", () => stopRecording(p.id));
   });
 
-  document.getElementById("backBtn").addEventListener("click", () => renderWritten());
+  document.getElementById("backBtn").addEventListener("click", () => {
+    cancelActiveRecording();
+    renderWritten();
+  });
   document.getElementById("submitBtn").addEventListener("click", submitTest);
 }
 
-// Safari registra in un formato diverso da Chrome/Firefox (spesso mp4/aac invece di
-// webm/opus). Se etichettiamo il blob con un tipo sbagliato, l'audio non si riproduce
-// per niente (anche se i byte sono corretti). Qui rileviamo il formato realmente
-// supportato dal browser prima di iniziare la registrazione.
-function pickMimeType() {
-  const candidates = [
-    "audio/webm;codecs=opus",
-    "audio/webm",
-    "audio/mp4",
-    "audio/aac",
-    "audio/ogg;codecs=opus",
-  ];
-  if (window.MediaRecorder && MediaRecorder.isTypeSupported) {
-    for (const type of candidates) {
-      if (MediaRecorder.isTypeSupported(type)) return type;
-    }
+// Registrazione compatibile con tutti i dispositivi (iPhone, Android, Windows, Mac).
+// Registriamo in WAV (PCM 16 bit, mono, 16 kHz) tramite Web Audio API: il WAV si
+// riproduce in QUALSIASI browser, quindi l'insegnante può ascoltare le risposte
+// sia da Safari sul Mac/iPhone sia da Chrome su Windows/Android (il webm registrato
+// da Chrome invece non si apre in Safari). 16 kHz mono = ~2 MB al minuto.
+// Se il Web Audio non è disponibile si ripiega su MediaRecorder.
+const WAV_SAMPLE_RATE = 16000;
+const MAX_RECORDING_SEC = 5 * 60;
+let activeRec = null; // { oid, stop(): Promise<Blob>, cancel(), timer }
+
+function micErrorMessage(err) {
+  const ua = navigator.userAgent || "";
+  const inApp = /Instagram|FBAN|FBAV|Telegram|Viber|WhatsApp|Line\/|; wv\)/i.test(ua);
+  if (!window.isSecureContext) {
+    return "Il microfono funziona solo su una pagina sicura (https://). Apri il link del test che inizia con https://.";
   }
-  return ""; // lascia scegliere il browser (fallback)
+  if (inApp || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    return "Questo browser non permette di usare il microfono.\n\nApri il link del test in Safari (iPhone/iPad/Mac) oppure in Chrome (Android/Windows), non dentro Instagram, Telegram, Viber o simili.";
+  }
+  const name = err && err.name;
+  if (name === "NotAllowedError" || name === "SecurityError") {
+    return "Hai negato il permesso del microfono.\n\n" +
+      "• iPhone/iPad: Impostazioni → Safari → Microfono → Consenti, poi ricarica la pagina.\n" +
+      "• Android/Chrome: tocca il lucchetto accanto all'indirizzo → Autorizzazioni → Microfono → Consenti.\n" +
+      "• Mac: Impostazioni di Sistema → Privacy e sicurezza → Microfono → attiva il browser.\n" +
+      "• Windows: Impostazioni → Privacy → Microfono → consenti alle app desktop, e nel browser clicca il lucchetto → Microfono → Consenti.";
+  }
+  if (name === "NotFoundError" || name === "OverconstrainedError") {
+    return "Nessun microfono trovato. Collega un microfono o delle cuffie con microfono e riprova.";
+  }
+  if (name === "NotReadableError" || name === "AbortError") {
+    return "Il microfono è usato da un'altra applicazione (Zoom, Teams, Skype...). Chiudila e riprova.";
+  }
+  return "Non riesco ad accedere al microfono. Controlla i permessi del browser e riprova.";
+}
+
+function encodeWav(chunks, inputRate, outRate) {
+  let length = 0;
+  chunks.forEach((c) => (length += c.length));
+  const input = new Float32Array(length);
+  let off = 0;
+  chunks.forEach((c) => { input.set(c, off); off += c.length; });
+  // ricampionamento con media semplice (anti-aliasing di base)
+  const ratio = inputRate / outRate;
+  const outLen = Math.floor(input.length / ratio);
+  const samples = new Int16Array(outLen);
+  for (let i = 0; i < outLen; i++) {
+    const s0 = Math.floor(i * ratio);
+    const s1 = Math.min(input.length, Math.floor((i + 1) * ratio));
+    let sum = 0, n = 0;
+    for (let j = s0; j < s1; j++) { sum += input[j]; n++; }
+    let v = n ? sum / n : input[s0] || 0;
+    v = Math.max(-1, Math.min(1, v));
+    samples[i] = v < 0 ? v * 0x8000 : v * 0x7fff;
+  }
+  const buffer = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buffer);
+  const writeStr = (o, str) => { for (let i = 0; i < str.length; i++) view.setUint8(o + i, str.charCodeAt(i)); };
+  writeStr(0, "RIFF");
+  view.setUint32(4, 36 + samples.length * 2, true);
+  writeStr(8, "WAVE");
+  writeStr(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true); // PCM
+  view.setUint16(22, 1, true); // mono
+  view.setUint32(24, outRate, true);
+  view.setUint32(28, outRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  writeStr(36, "data");
+  view.setUint32(40, samples.length * 2, true);
+  new Int16Array(buffer, 44).set(samples);
+  return new Blob([buffer], { type: "audio/wav" });
+}
+
+// Registratore WAV con Web Audio. L'AudioContext viene creato SUBITO nel click
+// (necessario su iPhone/Safari), prima di chiedere il microfono.
+async function createWavRecorder() {
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) throw new Error("no-webaudio");
+  const ctx = new Ctx();
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+    });
+  } catch (e) {
+    ctx.close && ctx.close();
+    throw e;
+  }
+  if (ctx.state === "suspended") await ctx.resume();
+  const source = ctx.createMediaStreamSource(stream);
+  const proc = ctx.createScriptProcessor(4096, 1, 1);
+  const chunks = [];
+  proc.onaudioprocess = (e) => {
+    chunks.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+    // uscita silenziosa: niente eco nelle casse
+    const out = e.outputBuffer.getChannelData(0);
+    out.fill(0);
+  };
+  source.connect(proc);
+  proc.connect(ctx.destination);
+  const release = () => {
+    try { proc.disconnect(); source.disconnect(); } catch (_) {}
+    stream.getTracks().forEach((t) => t.stop());
+    ctx.close && ctx.close();
+  };
+  return {
+    async stop() {
+      release();
+      if (!chunks.length) throw new Error("empty");
+      return encodeWav(chunks, ctx.sampleRate, WAV_SAMPLE_RATE);
+    },
+    cancel: release,
+  };
+}
+
+// Ripiego: MediaRecorder (formato scelto dal browser).
+function pickMimeType() {
+  const candidates = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm", "audio/aac", "audio/ogg;codecs=opus"];
+  if (window.MediaRecorder && MediaRecorder.isTypeSupported) {
+    for (const type of candidates) if (MediaRecorder.isTypeSupported(type)) return type;
+  }
+  return "";
+}
+
+async function createMediaRecorder() {
+  if (!window.MediaRecorder) throw new Error("no-recorder");
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const type = pickMimeType();
+  const rec = type ? new MediaRecorder(stream, { mimeType: type }) : new MediaRecorder(stream);
+  const chunks = [];
+  rec.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+  rec.start(1000);
+  const release = () => stream.getTracks().forEach((t) => t.stop());
+  return {
+    stop() {
+      return new Promise((resolve, reject) => {
+        rec.onstop = () => {
+          release();
+          if (!chunks.length) return reject(new Error("empty"));
+          resolve(new Blob(chunks, { type: rec.mimeType || type || "audio/webm" }));
+        };
+        rec.state !== "inactive" ? rec.stop() : rec.onstop();
+      });
+    },
+    cancel() { try { rec.stop(); } catch (_) {} release(); },
+  };
+}
+
+function setRecordButtons(recordingOid) {
+  document.querySelectorAll('button[data-action="record"]').forEach((b) => (b.disabled = !!recordingOid));
+  document.querySelectorAll('button[data-action="stop"]').forEach((b) => (b.disabled = b.dataset.oid !== recordingOid));
 }
 
 async function startRecording(oid) {
-  try {
-    activeStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  } catch (e) {
-    alert("Non riesco ad accedere al microfono. Controlla i permessi del browser.");
+  if (activeRec) return;
+  if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert(micErrorMessage(null));
     return;
   }
-  const chunks = [];
-  const preferredType = pickMimeType();
-  activeRecorder = preferredType ? new MediaRecorder(activeStream, { mimeType: preferredType }) : new MediaRecorder(activeStream);
-  const actualMimeType = activeRecorder.mimeType || preferredType || "audio/webm";
-  activeRecorder.ondataavailable = (e) => {
-    if (e.data && e.data.size > 0) chunks.push(e.data);
+  setRecordButtons(oid);
+  const statusEl = document.getElementById(`status-${oid}`);
+  statusEl.innerHTML = `<p class="hint">Attendo il permesso del microfono...</p>`;
+  let rec;
+  try {
+    try {
+      rec = await createWavRecorder();
+    } catch (e) {
+      if (e && e.name) throw e; // errore di permesso/microfono: non ha senso riprovare
+      rec = await createMediaRecorder();
+    }
+  } catch (e) {
+    statusEl.innerHTML = "";
+    setRecordButtons(null);
+    alert(micErrorMessage(e));
+    return;
+  }
+  const startedAt = Date.now();
+  const tick = () => {
+    const sec = Math.floor((Date.now() - startedAt) / 1000);
+    const mm = String(Math.floor(sec / 60));
+    const ss = String(sec % 60).padStart(2, "0");
+    const el = document.getElementById(`status-${oid}`);
+    if (el) el.innerHTML = `<p class="hint"><span class="rec-dot"></span>Registrazione in corso... ${mm}:${ss}</p>`;
+    if (sec >= MAX_RECORDING_SEC) stopRecording(oid);
   };
-  activeRecorder.onstop = () => {
-    const blob = new Blob(chunks, { type: actualMimeType });
-    state.audioBlobs[oid] = blob;
-    showPlayer(oid, blob);
-    activeStream.getTracks().forEach((t) => t.stop());
-  };
-  activeRecorder.start();
-  document.getElementById(`status-${oid}`).innerHTML = `<p class="hint"><span class="rec-dot"></span>Registrazione in corso...</p>`;
-  document.querySelector(`button[data-action="record"][data-oid="${oid}"]`).disabled = true;
-  document.querySelector(`button[data-action="stop"][data-oid="${oid}"]`).disabled = false;
+  activeRec = { oid, rec, timer: setInterval(tick, 500) };
+  tick();
 }
 
-function stopRecording(oid) {
-  if (activeRecorder && activeRecorder.state !== "inactive") activeRecorder.stop();
-  document.getElementById(`status-${oid}`).innerHTML = "";
-  document.querySelector(`button[data-action="record"][data-oid="${oid}"]`).disabled = false;
-  document.querySelector(`button[data-action="stop"][data-oid="${oid}"]`).disabled = true;
+async function stopRecording(oid) {
+  if (!activeRec || activeRec.oid !== oid) return;
+  const { rec, timer } = activeRec;
+  clearInterval(timer);
+  activeRec = null;
+  document.getElementById(`status-${oid}`).innerHTML = `<p class="hint">Salvataggio...</p>`;
+  try {
+    const blob = await rec.stop();
+    state.audioBlobs[oid] = blob;
+    showPlayer(oid, blob);
+    document.getElementById(`status-${oid}`).innerHTML = "";
+  } catch (e) {
+    document.getElementById(`status-${oid}`).innerHTML =
+      `<p class="hint" style="color:#c0392b">La registrazione è vuota. Controlla il microfono e riprova.</p>`;
+  }
+  setRecordButtons(null);
+}
+
+// Se lo studente torna indietro mentre registra, liberiamo il microfono.
+function cancelActiveRecording() {
+  if (!activeRec) return;
+  clearInterval(activeRec.timer);
+  activeRec.rec.cancel();
+  activeRec = null;
 }
 
 function showPlayer(oid, blob) {
   const url = URL.createObjectURL(blob);
   document.getElementById(`player-${oid}`).innerHTML = `
-    <audio controls src="${url}"></audio>
+    <audio controls preload="metadata" src="${url}"></audio>
     <p class="hint">Registrazione salvata. Premi di nuovo "Registra" se vuoi rifarla.</p>
   `;
   document.querySelector(`button[data-action="record"][data-oid="${oid}"]`).textContent = "🎙️ Rifai la registrazione";
@@ -529,6 +694,7 @@ function showPlayer(oid, blob) {
 // --------------------------------------------------------------- SUBMIT ----
 async function submitTest() {
   if (state.submitting) return;
+  if (activeRec) await stopRecording(activeRec.oid);
 
   const missingAudio = state.test.finalProduction.oral.filter((p) => !state.audioBlobs[p.id]);
   if (missingAudio.length > 0) {
@@ -592,6 +758,7 @@ function renderDone() {
 
 function extFromMimeType(mime) {
   if (!mime) return "webm";
+  if (mime.includes("wav")) return "wav";
   if (mime.includes("mp4")) return "mp4";
   if (mime.includes("aac")) return "aac";
   if (mime.includes("ogg")) return "ogg";
