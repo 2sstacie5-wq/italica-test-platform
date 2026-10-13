@@ -8,6 +8,7 @@ const basicAuth = require("express-basic-auth");
 
 const testData = require("./test-data");
 const placementData = require("./placement-data");
+const placementDataV1 = require("./placement-data-v1");
 const { gradeSubmission } = require("./grading");
 const store = require("./store");
 
@@ -144,7 +145,7 @@ app.post("/api/submit", upload.fields(oralFields), (req, res) => {
 });
 
 
-// ---------- Test rapido di livello (A1–C1, 15 minuti) ----------
+// ---------- Test di livello (A1–C1) ----------
 const LEVELS = ["A1", "A2", "B1", "B2", "C1"];
 
 function levelFromScore(score) {
@@ -190,6 +191,7 @@ app.post("/api/placement/submit", (req, res) => {
       timedOut: !!body.timedOut,
       score,
       maxScore: placementData.items.length,
+      version: placementData.meta.version,
       level,
       borderline,
       byLevel,
@@ -264,7 +266,9 @@ app.get("/api/admin/placement", (req, res) => {
 app.get("/api/admin/placement/:id", (req, res) => {
   const r = store.getPlacement(req.params.id);
   if (!r) return res.status(404).json({ error: "Risultato non trovato." });
-  res.json({ result: r, items: placementData.items });
+  // i risultati salvati prima del nuovo test (senza version) usano le vecchie domande
+  const items = r.version === placementData.meta.version ? placementData.items : placementDataV1.items;
+  res.json({ result: r, items });
 });
 
 app.post("/api/admin/submissions/:id/review", (req, res) => {

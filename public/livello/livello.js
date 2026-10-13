@@ -5,7 +5,7 @@
 const appEl = document.getElementById("app");
 const progressFill = document.getElementById("progressFill");
 const timerBadge = document.getElementById("timerBadge");
-const SAVE_KEY = "italica-livello-v1";
+const SAVE_KEY = "italica-livello-v2";
 const LETTERS = ["A", "B", "C", "D", "E"];
 
 let test = null;
