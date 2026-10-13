@@ -266,8 +266,11 @@ app.get("/api/admin/placement", (req, res) => {
 app.get("/api/admin/placement/:id", (req, res) => {
   const r = store.getPlacement(req.params.id);
   if (!r) return res.status(404).json({ error: "Risultato non trovato." });
-  // i risultati salvati prima del nuovo test (senza version) usano le vecchie domande
-  const items = r.version === placementData.meta.version ? placementData.items : placementDataV1.items;
+  // i risultati salvati prima del nuovo test (senza version) usano le vecchie domande da 50;
+  // dalla versione 2 in poi mostriamo solo le domande a cui quel test conteneva davvero
+  const items = r.version >= 2
+    ? placementData.items.filter((it) => r.details.some((d) => d.id === it.id))
+    : placementDataV1.items;
   res.json({ result: r, items });
 });
 
