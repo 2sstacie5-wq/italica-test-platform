@@ -44,7 +44,7 @@ module.exports = {
     { id: "q18", level: "B1", text: "È una persona ___ puoi sempre contare.", options: ["che", "di cui", "su cui", "con cui"], correct: 2 },
     { id: "q19", level: "B1", text: "Quando sono entrato in ufficio, i colleghi ___ già la riunione.", options: ["iniziano", "avevano iniziato", "hanno iniziato", "inizierebbero"], correct: 1 },
     { id: "q20", level: "B1", text: "Credo che i tuoi amici ___ ragione, ma vorrei sentire anche l’altra versione.", options: ["hanno", "avranno", "avessero", "abbiano"], correct: 3 },
-    { id: "q21", level: "B1", text: "Non riesco a trovare il documento: ___ ho messo ieri sera?", options: ["dove", "che", "a cui", "quando"], correct: 0 },
+    { id: "q21", level: "B1", text: "Non riesco a trovare il documento: ___ l’ho messo ieri sera?", options: ["dove", "che", "a cui", "quando"], correct: 0 },
     { id: "q22", level: "B1", text: "Benché ___ molto, Marco non è riuscito a superare l’esame.", options: ["ha studiato", "studiasse", "abbia studiato", "studierà"], correct: 2 },
 
     { id: "q23", level: "B2", text: "Se il direttore ___ prima della riunione, avremmo potuto modificare la proposta.", options: ["ci avesse avvisati", "ci avrebbe avvisato", "ci avvisava", "ci abbia avvisati"], correct: 0 },
