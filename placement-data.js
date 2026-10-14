@@ -1,9 +1,9 @@
-// Test di livello (A1–C1): 34 domande a scelta multipla.
+// Test di livello (A1–C1): 36 domande a scelta multipla.
 // `correct` è l'indice (0 = A, 1 = B, 2 = C, 3 = D) dell'opzione giusta.
 // Le opzioni vengono mescolate per ogni studente, quindi la posizione della
 // risposta giusta non si ripete. Per modificare una domanda basta cambiare qui.
 // Le domande vanno in ordine di difficoltà, dalle più facili alle più difficili.
-// Gli id q1–q30 sono i numeri del PDF originale; e1–e4 sono domande A1 molto facili aggiunte all’inizio.
+// Gli id q1–q30 sono i numeri del PDF originale; e1–e4 sono domande A1 molto facili aggiunte all’inizio; e5–e6 sono domande sul condizionale.
 
 module.exports = {
   meta: {
@@ -13,13 +13,13 @@ module.exports = {
     // il livello si calcola dal numero di risposte giuste
     scale: [
       { max: 10, level: "A1" },
-      { max: 16, level: "A2" },
-      { max: 23, level: "B1" },
-      { max: 29, level: "B2" },
-      { max: 34, level: "C1" },
+      { max: 17, level: "A2" },
+      { max: 24, level: "B1" },
+      { max: 30, level: "B2" },
+      { max: 36, level: "C1" },
     ],
     // se il punteggio è vicino al confine tra due livelli, consigliamo un colloquio orale
-    borderline: [[16, 17], [23, 24]],
+    borderline: [[17, 18], [24, 25]],
     showResultToStudent: true,
   },
   items: [
@@ -41,15 +41,17 @@ module.exports = {
     { id: "q8", level: "A2", text: "Ragazze, ___ già ___ i biglietti per il concerto?", options: ["avete / comprato", "avete / comprati", "siete / comprati", "avete / comprare"], correct: 0 },
     { id: "q9", level: "A2", text: "Non vedo Paolo da giorni. ___ hai parlato ultimamente?", options: ["Lo", "Gli", "Ne", "Ci"], correct: 1 },
     { id: "q12", level: "A2", text: "Non abbiamo più pane. ___ compri un po’ tornando a casa?", options: ["Lo", "Li", "Ne", "Ci"], correct: 2 },
+    { id: "e5", level: "A2", text: "___ volentieri con voi al cinema, ma stasera devo lavorare.", options: ["Verrei", "Vengo", "Venivo", "Verrò"], correct: 0 },
     { id: "q6", level: "A2", text: "Quando siamo arrivati alla stazione, il treno ___ già ___.", options: ["è / partito", "aveva / partito", "ha / partito", "era / partito"], correct: 3 },
     { id: "q15", level: "A2", text: "Nonostante ___ molto stanca, Francesca ha continuato a lavorare.", options: ["fosse", "era", "essere", "è stata"], correct: 0 },
 
     { id: "q17", level: "B1", text: "Il professore ci ha consigliato ___ più articoli in italiano.", options: ["di leggere", "che leggiamo", "a leggere", "leggiamo"], correct: 0 },
     { id: "q21", level: "B1", text: "Non riesco a trovare il documento: ___ l’ho messo ieri sera?", options: ["dove", "che", "a cui", "quando"], correct: 0 },
-    { id: "q19", level: "B1", text: "Quando sono entrato in ufficio, i colleghi ___ già la riunione.", options: ["iniziano", "avevano iniziato", "hanno iniziato", "inizierebbero"], correct: 1 },
+    { id: "q19", level: "B1", text: "Quando sono entrato in ufficio, i colleghi ___ la riunione.", options: ["iniziano già", "avevano già iniziato", "hanno già iniziato", "inizierebbero già"], correct: 1 },
     { id: "q18", level: "B1", text: "È una persona ___ puoi sempre contare.", options: ["che", "di cui", "su cui", "con cui"], correct: 2 },
     { id: "q20", level: "B1", text: "Credo che i tuoi amici ___ ragione, ma vorrei sentire anche l’altra versione.", options: ["hanno", "avranno", "avessero", "abbiano"], correct: 3 },
     { id: "q16", level: "B1", text: "Se avessi saputo che venivate, ___ qualcosa da mangiare.", options: ["preparerò", "preparavo", "avrei preparato", "avessi preparato"], correct: 2 },
+    { id: "e6", level: "B1", text: "Ti ___, ma non avevo il tuo numero di telefono.", options: ["avrei chiamato", "chiamerei", "ho chiamato", "chiamassi"], correct: 0 },
     { id: "q22", level: "B1", text: "Benché ___ molto, Marco non è riuscito a superare l’esame.", options: ["ha studiato", "studiasse", "abbia studiato", "studierà"], correct: 2 },
 
     { id: "q24", level: "B2", text: "La candidata ha parlato con tanta sicurezza ___ tutti si sono convinti della sua competenza.", options: ["affinché", "sebbene", "purché", "al punto che"], correct: 3 },

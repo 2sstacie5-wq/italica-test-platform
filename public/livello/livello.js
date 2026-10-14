@@ -5,7 +5,7 @@
 const appEl = document.getElementById("app");
 const progressFill = document.getElementById("progressFill");
 const timerBadge = document.getElementById("timerBadge");
-const SAVE_KEY = "italica-livello-v3";
+const SAVE_KEY = "italica-livello-v4";
 const LETTERS = ["A", "B", "C", "D", "E"];
 
 let test = null;
@@ -249,7 +249,7 @@ function renderDone(data, timedOut) {
     appEl.innerHTML = `
       <div class="card">
         <h2>Grazie, ${name}! 🇮🇹</h2>
-        <p class="lead">Тест надіслано. Ми скоро зв'яжемося з тобою і розповімо про твій рівень.</p>
+        <p class="lead">Тест надіслано. Наш адміністратор скоро тобі напише, розповість про твій рівень і надасть індивідуальний план його покращення.</p>
       </div>`;
     return;
   }
@@ -267,7 +267,7 @@ function renderDone(data, timedOut) {
           ? `<div class="pl-note">Твій результат на межі двох рівнів. Радимо коротку розмову з викладачем — так ми точно підберемо групу.</div>`
           : `<div class="pl-note">Цей тест перевіряє граматику й лексику. Остаточний рівень викладач підтвердить після короткої розмови.</div>`
       }
-      <p class="lead" style="margin-top:16px">Ми зв'яжемося з тобою найближчим часом. <em>A presto!</em></p>
+      <p class="lead" style="margin-top:16px">Наш адміністратор скоро тобі напише і надасть індивідуальний план покращення твого актуального рівня. <em>A presto!</em></p>
     </div>`;
 }
 
