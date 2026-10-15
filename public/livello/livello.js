@@ -97,7 +97,7 @@ function renderStart() {
       </div>
       <div class="field">
         <label for="contact">Telegram нікнейм чи номер телефону</label>
-        <input type="text" id="contact" autocomplete="tel" placeholder="Щоб ми могли зв'язатися з тобою" />
+        <input type="text" id="contact" autocomplete="tel" required placeholder="Щоб ми могли зв'язатися з тобою" />
       </div>
       <div class="actions end">
         <button class="btn-primary" id="startBtn">Почати тест</button>
@@ -109,11 +109,17 @@ function renderStart() {
       alert("Будь ласка, напиши своє ім'я та прізвище.");
       return;
     }
+    const contact = document.getElementById("contact").value.trim();
+    if (!contact) {
+      alert("Будь ласка, напиши свій Telegram нікнейм чи номер телефону, щоб ми могли з тобою зв'язатися.");
+      document.getElementById("contact").focus();
+      return;
+    }
     const order = {};
     test.items.forEach((it) => (order[it.id] = shuffle(it.options.map((_, i) => i))));
     s = {
       studentName: name,
-      contact: document.getElementById("contact").value.trim(),
+      contact,
       startedAt: Date.now(),
       index: 0,
       answers: {},
