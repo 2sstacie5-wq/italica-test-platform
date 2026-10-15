@@ -30,7 +30,7 @@ module.exports = {
     { id: "q4", level: "A1", text: "I miei fratelli ___ a Bologna, ma studiano a Firenze.", options: ["vive", "viviamo", "vivete", "vivono"], correct: 3 },
     { id: "q5", level: "A1", text: "Stasera non ___ uscire perché sono stanco.", options: ["voglio", "vuoi", "volete", "vuole"], correct: 0 },
     { id: "q1", level: "A1", text: "Signora, ___ ripetere il Suo cognome, per favore?", options: ["puoi", "potete", "può", "possono"], correct: 2 },
-    { id: "q2", level: "A1", text: "Ragazzi, a che ora ___ domani mattina?", options: ["vi alzate", "si alzano", "ci alziamo", "ti alzi"], correct: 0 },
+    { id: "q2", level: "A1", text: "Ragazzi, a che ora ___ domani mattina?", options: ["vi alzate", "si alzano", "alziamo", "ti alzi"], correct: 0 },
     { id: "q3", level: "A1", text: "Marta non trova le chiavi. ___ cerca da mezz’ora.", options: ["Li", "Le", "La", "Lo"], correct: 1 },
 
     { id: "q13", level: "A2", text: "Mio fratello è più paziente ___ me.", options: ["di", "che", "come a", "da"], correct: 0 },
