@@ -188,16 +188,37 @@ async function confirmAll(){
 }
 
 /* ---------- teacher ---------- */
-function renderTeacher(){
-  const cards=S.students.slice().sort((a,b)=>String(a.name).localeCompare(b.name,"uk")).map(s=>{const st=stats(s);
-    return `<button class="scard" data-act="open" data-id="${esc(s.id)}"><div class="row" style="justify-content:space-between"><span class="nm">${esc(s.name)}</span>${st.pend?`<span class="pill pend">${st.pend} на перевірку</span>`:""}</div>
-    <div class="row"><span class="pill lv">${s.fromL} → ${s.toL}</span><span class="note">${st.ok}/${st.total} уроків · ${st.rank}</span></div>
-    <div class="bar"><i style="width:${Math.round(st.pct*100)}%"></i></div><span class="note">код учня: <b>${esc(s.code)}</b></span></button>`;}).join("");
-  app.innerHTML=BRAND+`<div class="backrow"><h1 style="font-size:26px;font-weight:800">Учні</h1><div class="row"><button class="btn ghost small" data-act="demo">Подивитись приклад</button><button class="btn ghost small" data-act="syl">Силабус</button><button class="btn" data-act="new">+ Новий учень</button></div></div>
-  ${S.students.length?`<div class="slist">${cards}</div>`:`<div class="card gate"><div class="hand">Поки порожньо</div><p class="muted" style="max-width:440px;margin:0">Додайте першого учня: вкажіть точку А (з якого уроку починає) і точку B (до якого рівня йде). Карта шляху побудується з силабусів A1–B2 автоматично, а учень отримає код для входу.</p><button class="btn" data-act="new">+ Новий учень</button></div>`}
+const NONE="__none";
+function folderOf(s){return s.teacher&&(S.teachers||[]).includes(s.teacher)?s.teacher:NONE;}
+function renderFolders(){
+  const T=S.teachers||[]; const groups=T.map(n=>({key:n,name:n})); if(S.students.some(s=>folderOf(s)===NONE)) groups.push({key:NONE,name:"Без викладача"});
+  const cards=groups.map(g=>{const list=S.students.filter(s=>folderOf(s)===g.key); const pend=list.reduce((a,s)=>a+stats(s).pend,0);
+    return `<div class="scard folder"><button class="fopen" data-act="folder" data-f="${esc(g.key)}"><span class="ficon">📁</span><span class="nm">${esc(g.name)}</span>
+      <span class="note">${list.length} ${plural(list.length,"учень","учні","учнів")}</span>${pend?`<span class="pill pend">${pend} на перевірку</span>`:""}</button>
+      ${g.key!==NONE&&!list.length?`<button class="btn ghost small" data-act="fdel" data-f="${esc(g.key)}">Видалити папку</button>`:""}</div>`;}).join("");
+  app.innerHTML=BRAND+`<div class="backrow"><h1 style="font-size:26px;font-weight:800">Викладачі</h1><div class="row"><button class="btn ghost small" data-act="demo">Подивитись приклад</button><button class="btn ghost small" data-act="syl">Силабус</button></div></div>
+  <div class="slist">${cards}</div>
+  <form class="row" id="fnew"><input id="fnew-n" placeholder="напр. Маестра Олена" style="flex:1;min-width:180px"><button class="btn" type="submit">+ Нова папка викладача</button></form>
   <p class="note">Учні відкривають <b>italica-test.onrender.com/percorso</b> і вводять свій код. Реєстрація не потрібна.</p>
   <div class="row"><a class="btn ghost small" href="/api/admin/percorso/export" download>Завантажити резервну копію</a>
   <label class="btn ghost small" for="imp">Імпортувати з файлу</label><input id="imp" type="file" accept=".json,application/json" hidden></div>`;
+  document.getElementById("fnew").onsubmit=async ev=>{ev.preventDefault(); const n=document.getElementById("fnew-n").value.trim(); if(!n)return;
+    if(T.includes(n)){toast("Така папка вже є");return;}
+    try{await S.db.setTeachers([...T,n]); toast("Папку додано");}catch(e){toast("Не вдалося зберегти.");}};
+}
+function plural(n,a,b,c){const m=n%10,h=n%100; return m===1&&h!==11?a: m>=2&&m<=4&&(h<12||h>14)?b:c;}
+function renderTeacher(){
+  if(S.folder==null) return renderFolders();
+  const fname=S.folder===NONE?"Без викладача":S.folder;
+  const cards=S.students.filter(s=>folderOf(s)===S.folder).slice().sort((a,b)=>String(a.name).localeCompare(b.name,"uk")).map(s=>{const st=stats(s);
+    return `<button class="scard" data-act="open" data-id="${esc(s.id)}"><div class="row" style="justify-content:space-between"><span class="nm">${esc(s.name)}</span>${st.pend?`<span class="pill pend">${st.pend} на перевірку</span>`:""}</div>
+    <div class="row"><span class="pill lv">${s.fromL} → ${s.toL}</span><span class="note">${st.ok}/${st.total} уроків · ${st.rank}</span></div>
+    <div class="bar"><i style="width:${Math.round(st.pct*100)}%"></i></div><span class="note">код учня: <b>${esc(s.code)}</b></span></button>`;}).join("");
+  const has=S.students.some(s=>folderOf(s)===S.folder);
+  app.innerHTML=BRAND+`<div class="backrow"><button class="btn ghost small" data-act="folders">← Усі викладачі</button></div>
+  <div class="backrow"><h1 style="font-size:26px;font-weight:800">📁 ${esc(fname)}</h1><div class="row"><button class="btn" data-act="new">+ Новий учень</button></div></div>
+  ${has?`<div class="slist">${cards}</div>`:`<div class="card gate"><div class="hand">Поки порожньо</div><p class="muted" style="max-width:440px;margin:0">Додайте першого учня: вкажіть точку А (з якого уроку починає) і точку B (до якого рівня йде). Карта шляху побудується з силабусів A1–B2 автоматично, а учень отримає код для входу.</p><button class="btn" data-act="new">+ Новий учень</button></div>`}
+  <p class="note">Учні відкривають <b>italica-test.onrender.com/percorso</b> і вводять свій код. Реєстрація не потрібна.</p>`;
 }
 function lvlOpts(sel){return LEVELS.map(l=>`<option ${l===sel?"selected":""}>${l}</option>`).join("")}
 function lessonOpts(lvl,sel){return FLAT[lvl].map(l=>`<option value="${esc(l.id)}" ${l.id===sel?"selected":""}>${l.num}. ${esc(l.title)}</option>`).join("")}
@@ -208,6 +229,7 @@ function renderForm(s){
     <h1 style="font-size:24px;font-weight:800">${s?"Редагувати учня":"Новий учень"}</h1>
     <div class="grid2"><label class="f">Ім'я учня<input id="f-name" required value="${esc(e.name)}" placeholder="напр. Олена"></label>
       <label class="f">Уроків на тиждень<input id="f-pw" type="number" min="0.5" max="7" step="0.5" value="${esc(e.perWeek)}"></label></div>
+    <label class="f">Викладач (папка)<select id="f-t">${(S.teachers||[]).map(n=>`<option ${n===(s?s.teacher:S.folder)?"selected":""}>${esc(n)}</option>`).join("")}<option value="" ${(s?!(S.teachers||[]).includes(s.teacher):!(S.teachers||[]).includes(S.folder))?"selected":""}>— без викладача —</option></select></label>
     <fieldset class="card" style="background:var(--blue-soft);border:0;display:flex;flex-direction:column;gap:10px"><legend class="pill lv" style="background:var(--paper)">Точка А · звідки стартує</legend>
       <div class="grid2"><label class="f">Рівень<select id="f-fl">${lvlOpts(e.fromL)}</select></label><label class="f">З уроку<select id="f-fn">${lessonOpts(e.fromL,e.fromId)}</select></label></div>
       <label class="f">Або своя тема першого уроку (не обов'язково)<input id="f-st" value="${esc(((e.extra||{})._start||[])[0]?.t||"")}" placeholder="напр. Passato prossimo: повторення"></label>
@@ -233,12 +255,12 @@ function renderForm(s){
   f("f-tl").onchange=()=>{const L=f("f-tl").value;f("f-tn").innerHTML=lessonOpts(L,FLAT[L][FLAT[L].length-1].id);sync()};
   ["f-fn","f-tn","f-pw","f-st"].forEach(id=>f(id).oninput=sync); sync();
   f("sf").onsubmit=async ev=>{ev.preventDefault(); if(!sync()) return;
-    const data={name:f("f-name").value.trim(),fromL:f("f-fl").value,fromId:f("f-fn").value,toL:f("f-tl").value,toId:f("f-tn").value,perWeek:+f("f-pw").value||2,goal:f("f-goal").value.trim(),extra:{_start:startArr()}};
+    const data={name:f("f-name").value.trim(),fromL:f("f-fl").value,fromId:f("f-fn").value,toL:f("f-tl").value,toId:f("f-tn").value,perWeek:+f("f-pw").value||2,goal:f("f-goal").value.trim(),teacher:f("f-t").value,extra:{_start:startArr()}};
     if(!data.name){f("f-name").focus();return;}
     try{
       if(s){await S.db.collection("students").doc(s.id).update(data); S.sel=s.id;}
       else{const code=genCode(); const ref=S.db.collection("students").doc(); await ref.set({...data,code,marks:{},created:Date.now()}); S.sel=ref.id;}
-      toast(s?"Збережено":"Карту створено"); S.view="map"; render();
+      S.folder=data.teacher||NONE; toast(s?"Збережено":"Карту створено"); S.view="map"; render();
     }catch(e){toast("Не вдалося зберегти. Перевірте доступ.");}
   };
 }
@@ -323,7 +345,10 @@ document.addEventListener("click",ev=>{
   if(a&&a.startsWith("e-")) return editLesson(a,+t.dataset.i);
   if(a==="demo"){S.demo=true;S.demoS=demoStudent();return render();}
   if(a==="back"){S.demo=false;S.view="list";S.sel=S.teacher?null:S.sel;return render();}
-  if(a==="open"){S.sel=t.dataset.id;S.view="map";return render();}
+  if(a==="open"){const o=S.students.find(x=>x.id===t.dataset.id); if(o) S.folder=folderOf(o); S.sel=t.dataset.id;S.view="map";return render();}
+  if(a==="folder"){S.folder=t.dataset.f;S.view="list";return render();}
+  if(a==="folders"){S.folder=null;S.view="list";return render();}
+  if(a==="fdel"){const n=t.dataset.f; S.db.setTeachers((S.teachers||[]).filter(x=>x!==n)).then(()=>toast("Папку видалено")).catch(()=>toast("Не вдалося зберегти."));return;}
   if(a==="openSel"){S.view="map";return render();}
   if(a==="new"){S.editing=false;S.view="form";return render();}
   if(a==="edit"){S.editing=true;S.view="form";return render();}
@@ -348,12 +373,12 @@ function makeDb(mode){
   const T=mode==="teacher"; let students=[], syl=null, lastS="", lastY=""; const subs=[], ysubs=[];
   const api=async(method,url,body)=>{const r=await fetch(url,{method,headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined,credentials:"same-origin"});
     if(!r.ok){const e=new Error("http "+r.status);e.status=r.status;throw e;} return r.status===204?null:r.json();};
-  const fire=(force)=>{const a=JSON.stringify(students), b=JSON.stringify(syl);
+  const fire=(force)=>{const a=JSON.stringify([students,S.teachers||[]]), b=JSON.stringify(syl);
     if(force||a!==lastS){lastS=a; subs.forEach(f=>f({docs:students.map(x=>({id:x.id,data:()=>x}))}));}
     if(force||b!==lastY){lastY=b; ysubs.forEach(f=>f({exists:!!syl,data:()=>({levels:syl})}));}};
   async function refresh(force){
     try{
-      if(T){const r=await api("GET","/api/admin/percorso/all"); students=r.students; syl=r.syllabus;}
+      if(T){const r=await api("GET","/api/admin/percorso/all"); students=r.students; syl=r.syllabus; S.teachers=r.teachers||[];}
       else{ if(!S.code){students=[]; const r=await api("GET","/api/percorso/syllabus"); syl=r.syllabus;}
         else{const r=await api("GET","/api/percorso/s/"+encodeURIComponent(S.code)).catch(e=>{if(e.status===404)return {student:null,syllabus:syl};throw e;}); students=r.student?[r.student]:[]; syl=r.syllabus;} }
       fire(force);
@@ -362,6 +387,7 @@ function makeDb(mode){
   const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,10);
   const db={
     refresh,
+    setTeachers:async list=>{await api("PUT","/api/admin/percorso/teachers",{teachers:list}); await refresh(true);},
     collection:()=>({
       doc:(id)=>{id=id||newId(); return {id,
         set:async d=>{await api("PUT","/api/admin/percorso/students/"+id,d); await refresh();},

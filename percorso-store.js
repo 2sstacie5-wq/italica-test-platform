@@ -12,7 +12,8 @@ const TOKEN = process.env.GITHUB_TOKEN || "";
 const GIST_FILE = "percorso.json";
 const useGist = !!(GIST_ID && TOKEN);
 
-let state = { students: {}, syllabus: null };
+const DEFAULT_TEACHERS = ["Маестра Наті", "Маестра Ліза"];
+let state = { students: {}, syllabus: null, teachers: DEFAULT_TEACHERS.slice() };
 let ready = null;
 let saveTimer = null;
 
@@ -47,7 +48,7 @@ async function load() {
   const local = readLocal();
   if (local) state = local;
 }
-function init() { if (!ready) ready = load().then(() => { state.students = state.students || {}; }); return ready; }
+function init() { if (!ready) ready = load().then(() => { state.students = state.students || {}; if (!Array.isArray(state.teachers)) state.teachers = DEFAULT_TEACHERS.slice(); }); return ready; }
 function scheduleSave() {
   writeLocal();
   if (!useGist) return;
@@ -68,7 +69,8 @@ function merge(a, b) {
 module.exports = {
   init,
   usesGist: () => useGist,
-  all: () => ({ students: Object.entries(state.students).map(([id, s]) => ({ ...s, id })), syllabus: state.syllabus ? state.syllabus.levels : null }),
+  all: () => ({ students: Object.entries(state.students).map(([id, s]) => ({ ...s, id })), syllabus: state.syllabus ? state.syllabus.levels : null, teachers: state.teachers }),
+  setTeachers: (list) => { state.teachers = list; scheduleSave(); },
   syllabus: () => (state.syllabus ? state.syllabus.levels : null),
   byCode: (code) => { const e = Object.entries(state.students).find(([, s]) => String(s.code).toUpperCase() === String(code).toUpperCase()); return e ? { ...e[1], id: e[0] } : null; },
   get: (id) => state.students[id],
@@ -76,6 +78,6 @@ module.exports = {
   patch: (id, p) => { if (!state.students[id]) return false; const d = { ...p }; delete d.id; merge(state.students[id], d); scheduleSave(); return true; },
   remove: (id) => { delete state.students[id]; scheduleSave(); },
   setSyllabus: (v) => { state.syllabus = v; scheduleSave(); },
-  importAll: (obj) => { if (obj.students) state.students = obj.students; if ("syllabus" in obj) state.syllabus = obj.syllabus; scheduleSave(); },
+  importAll: (obj) => { if (obj.students) state.students = obj.students; if ("syllabus" in obj) state.syllabus = obj.syllabus; if (Array.isArray(obj.teachers)) state.teachers = obj.teachers; scheduleSave(); },
   exportAll: () => state,
 };

@@ -255,6 +255,12 @@ app.put("/api/admin/percorso/syllabus", pReady, (req, res) => {
   if (!Array.isArray(levels) || !levels.length) return res.status(400).json({ error: "Порожній силабус" });
   percorso.setSyllabus({ levels, updated: Date.now() }); res.json({ ok: true });
 });
+app.put("/api/admin/percorso/teachers", pReady, (req, res) => {
+  const list = (req.body && req.body.teachers) || [];
+  if (!Array.isArray(list)) return res.status(400).json({ error: "Потрібен список" });
+  const clean = [...new Set(list.map((x) => String(x).trim()).filter(Boolean))].slice(0, 50);
+  percorso.setTeachers(clean); res.json({ ok: true, teachers: clean });
+});
 app.delete("/api/admin/percorso/syllabus", pReady, (req, res) => { percorso.setSyllabus(null); res.status(204).end(); });
 app.get("/api/admin/percorso/export", pReady, (req, res) => { res.setHeader("Content-Disposition", "attachment; filename=percorso-backup.json"); res.json(percorso.exportAll()); });
 app.post("/api/admin/percorso/import", pReady, (req, res) => {
