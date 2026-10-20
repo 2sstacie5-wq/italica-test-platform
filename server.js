@@ -210,6 +210,28 @@ app.post("/api/placement/submit", (req, res) => {
   }
 });
 
+// ---------- Il mio percorso: трекер прогресу учня (публічна частина, вхід за кодом) ----------
+const percorso = require("./percorso-store");
+percorso.init();
+const pReady = (req, res, next) => percorso.init().then(() => next(), next);
+app.get("/api/percorso/syllabus", pReady, (req, res) => res.json({ syllabus: percorso.syllabus() }));
+app.get("/api/percorso/s/:code", pReady, (req, res) => {
+  const s = percorso.byCode(req.params.code);
+  if (!s) return res.status(404).json({ error: "Код не знайдено" });
+  res.json({ student: s, syllabus: percorso.syllabus() });
+});
+app.post("/api/percorso/s/:code/mark", pReady, (req, res) => {
+  const s = percorso.byCode(req.params.code);
+  if (!s) return res.status(404).json({ error: "Код не знайдено" });
+  const lesson = String((req.body || {}).lesson || "");
+  const v = (req.body || {}).v;
+  if (!lesson || lesson.length > 80 || !["pend", "none"].includes(v)) return res.status(400).json({ error: "Некоректні дані" });
+  const cur = (s.marks || {})[lesson];
+  if (cur && cur.s === "ok") return res.status(403).json({ error: "Урок уже підтверджено" });
+  percorso.patch(s.id, { marks: { [lesson]: { s: v, t: Date.now() } } });
+  res.json({ ok: true });
+});
+
 // ---------- Area insegnante (protetta da password) ----------
 const adminAuth = basicAuth({
   users: { [ADMIN_USER]: ADMIN_PASSWORD },
@@ -219,6 +241,27 @@ const adminAuth = basicAuth({
 
 app.use("/admin", adminAuth, express.static(path.join(__dirname, "admin")));
 app.use("/api/admin", adminAuth);
+
+// ---------- Il mio percorso: викладацька частина ----------
+app.get("/api/admin/percorso/all", pReady, (req, res) => res.json(percorso.all()));
+app.put("/api/admin/percorso/students/:id", pReady, (req, res) => { percorso.set(req.params.id, req.body || {}); res.json({ ok: true }); });
+app.patch("/api/admin/percorso/students/:id", pReady, (req, res) => {
+  if (!percorso.patch(req.params.id, req.body || {})) return res.status(404).json({ error: "Учня не знайдено" });
+  res.json({ ok: true });
+});
+app.delete("/api/admin/percorso/students/:id", pReady, (req, res) => { percorso.remove(req.params.id); res.status(204).end(); });
+app.put("/api/admin/percorso/syllabus", pReady, (req, res) => {
+  const levels = (req.body || {}).levels;
+  if (!Array.isArray(levels) || !levels.length) return res.status(400).json({ error: "Порожній силабус" });
+  percorso.setSyllabus({ levels, updated: Date.now() }); res.json({ ok: true });
+});
+app.delete("/api/admin/percorso/syllabus", pReady, (req, res) => { percorso.setSyllabus(null); res.status(204).end(); });
+app.get("/api/admin/percorso/export", pReady, (req, res) => { res.setHeader("Content-Disposition", "attachment; filename=percorso-backup.json"); res.json(percorso.exportAll()); });
+app.post("/api/admin/percorso/import", pReady, (req, res) => {
+  const b = req.body || {};
+  if (!b.students || typeof b.students !== "object") return res.status(400).json({ error: "Немає поля students" });
+  percorso.importAll(b); res.json({ ok: true, count: Object.keys(b.students).length });
+});
 
 app.get("/api/admin/submissions", (req, res) => {
   const all = store.readAll().map((s) => ({
