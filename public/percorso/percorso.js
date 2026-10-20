@@ -24,6 +24,9 @@ function buildPath(s,withSkipped){
     const it={...l,title:ren[l.id]||l.title,renamed:!!ren[l.id],skipped:!!sk[l.id]};
     if(withSkipped||!it.skipped) out.push(it);
     (ex[l.id]||[]).forEach(x=>push({lvl:l.lvl,id:x.id,num:"+",title:x.t,block:l.block,blockName:l.blockName,rev:false,extra:true,anchor:l.id}));};
+  // custom first lessons typed by the teacher (stored as extras anchored to "_start")
+  const b0=base[0]||{lvl:s.fromL};
+  (ex._start||[]).forEach(x=>push({lvl:b0.lvl,id:x.id,num:"+",title:x.t,block:b0.block,blockName:b0.blockName,rev:false,extra:true,anchor:"_start"}));
   base.forEach(push); return out;
 }
 const RANKS=[[0,"Principiante"],[.15,"Curioso"],[.35,"Esploratore"],[.6,"Viaggiatore"],[.85,"Quasi italiano"],[1,"Maestro"]];
@@ -207,6 +210,8 @@ function renderForm(s){
       <label class="f">Уроків на тиждень<input id="f-pw" type="number" min="0.5" max="7" step="0.5" value="${esc(e.perWeek)}"></label></div>
     <fieldset class="card" style="background:var(--blue-soft);border:0;display:flex;flex-direction:column;gap:10px"><legend class="pill lv" style="background:var(--paper)">Точка А · звідки стартує</legend>
       <div class="grid2"><label class="f">Рівень<select id="f-fl">${lvlOpts(e.fromL)}</select></label><label class="f">З уроку<select id="f-fn">${lessonOpts(e.fromL,e.fromId)}</select></label></div>
+      <label class="f">Або своя тема першого уроку (не обов'язково)<input id="f-st" value="${esc(((e.extra||{})._start||[])[0]?.t||"")}" placeholder="напр. Passato prossimo: повторення"></label>
+      <span class="note">Якщо впишете тему, вона стане першим уроком на карті, а далі шлях піде з вибраного уроку.</span>
       <span class="note">Підказка: рівень з тесту /livello — це ваша точка А.</span></fieldset>
     <fieldset class="card" style="background:var(--red-soft);border:0;display:flex;flex-direction:column;gap:10px"><legend class="pill ex" style="background:var(--paper)">Точка B · куди йде</legend>
       <div class="grid2"><label class="f">Рівень<select id="f-tl">${lvlOpts(e.toL)}</select></label><label class="f">До уроку<select id="f-tn">${lessonOpts(e.toL,e.toId)}</select></label></div></fieldset>
@@ -216,15 +221,19 @@ function renderForm(s){
       ${s?`<span id="delwrap"><button class="btn ghost small" type="button" data-act="askdel">Видалити учня</button></span>`:""}</div>
   </form>`;
   const f=id=>document.getElementById(id);
-  const sync=()=>{const tmp={fromL:f("f-fl").value,fromId:f("f-fn").value,toL:f("f-tl").value,toId:f("f-tn").value,perWeek:+f("f-pw").value||2};
+  const startArr=()=>{const t=f("f-st").value.trim(); const cur=((e.extra||{})._start||[]).slice();
+    if(t){ if(cur.length) cur[0]={...cur[0],t}; else cur.unshift({id:"x"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),t}); }
+    else if(cur.length) cur.shift();
+    return cur;};
+  const sync=()=>{const tmp={fromL:f("f-fl").value,fromId:f("f-fn").value,toL:f("f-tl").value,toId:f("f-tn").value,perWeek:+f("f-pw").value||2,extra:{...(e.extra||{}),_start:startArr()}};
     const en=ends(tmp); const ok= LEVELS.indexOf(tmp.toL)>LEVELS.indexOf(tmp.fromL) || (tmp.toL===tmp.fromL && en.b>=en.a);
     f("f-sum").textContent= ok? `Шлях: ${buildPath(tmp).length} уроків. При ${tmp.perWeek} на тиждень це ≈ ${Math.ceil(buildPath(tmp).length/tmp.perWeek)} тижнів.` : "Точка B має бути далі за точку А.";
     return ok;};
   f("f-fl").onchange=()=>{const L=f("f-fl").value;f("f-fn").innerHTML=lessonOpts(L,FLAT[L][0].id);sync()};
   f("f-tl").onchange=()=>{const L=f("f-tl").value;f("f-tn").innerHTML=lessonOpts(L,FLAT[L][FLAT[L].length-1].id);sync()};
-  ["f-fn","f-tn","f-pw"].forEach(id=>f(id).oninput=sync); sync();
+  ["f-fn","f-tn","f-pw","f-st"].forEach(id=>f(id).oninput=sync); sync();
   f("sf").onsubmit=async ev=>{ev.preventDefault(); if(!sync()) return;
-    const data={name:f("f-name").value.trim(),fromL:f("f-fl").value,fromId:f("f-fn").value,toL:f("f-tl").value,toId:f("f-tn").value,perWeek:+f("f-pw").value||2,goal:f("f-goal").value.trim()};
+    const data={name:f("f-name").value.trim(),fromL:f("f-fl").value,fromId:f("f-fn").value,toL:f("f-tl").value,toId:f("f-tn").value,perWeek:+f("f-pw").value||2,goal:f("f-goal").value.trim(),extra:{_start:startArr()}};
     if(!data.name){f("f-name").focus();return;}
     try{
       if(s){await S.db.collection("students").doc(s.id).update(data); S.sel=s.id;}
