@@ -86,7 +86,6 @@ function renderMap(s,mode){
   </section>
   <section class="stats">
     <div class="stat"><div class="k">Пройдено</div><div class="v">${st.ok} / ${st.total}</div><div class="s">уроків на шляху</div></div>
-    <div class="stat"><div class="k">Досвід</div><div class="v">${st.xp} XP</div><div class="s">10 за урок, 25 за повторення</div></div>
     <div class="stat"><div class="k">Залишилось</div><div class="v">${st.left}</div><div class="s">${st.pend?st.pend+" чекає підтвердження":"уроків до точки B"}</div></div>
     <div class="stat"><div class="k">Фініш</div><div class="v" style="font-size:18px">${st.left?"≈ "+fmtDate(st.eta):"Готово!"}</div><div class="s">${s.perWeek} ${+s.perWeek===1?"урок":(+s.perWeek<5&&Number.isInteger(+s.perWeek)?"уроки":"уроків")} на тиждень</div></div>
   </section>
@@ -149,7 +148,7 @@ function openLesson(i){
       : `<button class="btn" data-act="mark" data-i="${i}" data-v="pend">Я пройшов цей урок</button>`;
   } else acts=`<span class="pill ex">У прикладі позначки не зберігаються</span>`;
   sheet.innerHTML=`<div class="in"><div class="row" style="justify-content:space-between"><span class="pill lv">${l.lvl} · ${l.extra?"додатковий урок":"урок "+l.num}${l.rev?" · чекпоінт":""}</span><button class="btn ghost small" data-act="close">Закрити</button></div>
-    <h2 style="font-size:20px">${esc(l.title)}</h2><p class="note" style="margin:0">Блок ${l.block+1}: ${esc(l.blockName)} · ${l.rev?"+25":"+10"} XP</p><div class="row">${acts}</div>${edit}</div>`;
+    <h2 style="font-size:20px">${esc(l.title)}</h2><p class="note" style="margin:0">Блок ${l.block+1}: ${esc(l.blockName)}</p><div class="row">${acts}</div>${edit}</div>`;
   sheet.hidden=false;
 }
 function closeSheet(){sheet.hidden=true}
