@@ -78,6 +78,6 @@ module.exports = {
   patch: (id, p) => { if (!state.students[id]) return false; const d = { ...p }; delete d.id; merge(state.students[id], d); scheduleSave(); return true; },
   remove: (id) => { delete state.students[id]; scheduleSave(); },
   setSyllabus: (v) => { state.syllabus = v; scheduleSave(); },
-  importAll: (obj) => { if (obj.students) state.students = obj.students; if ("syllabus" in obj) state.syllabus = obj.syllabus; if (Array.isArray(obj.teachers)) state.teachers = obj.teachers; scheduleSave(); },
+  importAll: (obj) => { if (obj.students) state.students = { ...state.students, ...obj.students }; if ("syllabus" in obj) state.syllabus = obj.syllabus; if (Array.isArray(obj.teachers)) state.teachers = obj.teachers; scheduleSave(); },
   exportAll: () => state,
 };
