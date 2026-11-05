@@ -270,7 +270,7 @@ function renderDone(data, timedOut) {
 
 function contactFormHtml() {
   return `
-      <p class="lead" style="margin-top:16px">Ти молодець! Залиш свій телеграм, якщо хочеш навчатись у нас. У якості подарунку наш методист надасть тобі індивідуальний план покращення твого актуального рівня та менеджер підбере формат, який тобі точно підійде і виведе на новий етап у вивченні мови! <em>A presto!</em></p>
+      <p class="lead" style="margin-top:16px">Ти молодець! <strong style="color:#d9491f;background:linear-gradient(transparent 55%,#fbe3d8 55%);padding:0 2px">Залиш свій телеграм, якщо хочеш навчатись у нас.</strong> У якості подарунку наш методист надасть тобі індивідуальний план покращення твого актуального рівня та менеджер підбере формат, який тобі точно підійде і виведе на новий етап у вивченні мови! <em>A presto!</em></p>
       <div id="contactBox">
         <div class="field">
           <label for="contact">Telegram нікнейм чи номер телефону</label>
