@@ -201,9 +201,25 @@ app.post("/api/placement/submit", (req, res) => {
 
     res.json(
       placementData.meta.showResultToStudent
-        ? { ok: true, score, maxScore: result.maxScore, level, borderline }
-        : { ok: true }
+        ? { ok: true, id: result.id, score, maxScore: result.maxScore, level, borderline }
+        : { ok: true, id: result.id }
     );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore del server durante il salvataggio." });
+  }
+});
+
+// Контакт учень залишає вже після тесту, на екрані результату
+app.post("/api/placement/:id/contact", (req, res) => {
+  try {
+    const contact = String((req.body || {}).contact || "").trim().slice(0, 120);
+    if (!contact) return res.status(400).json({ error: "Порожній контакт" });
+    const r = store.getPlacement(req.params.id);
+    if (!r) return res.status(404).json({ error: "Результат не знайдено" });
+    if (r.contact && r.contact !== contact) return res.status(409).json({ error: "Контакт уже збережено" });
+    store.updatePlacement(r.id, { contact });
+    res.json({ ok: true });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore del server durante il salvataggio." });

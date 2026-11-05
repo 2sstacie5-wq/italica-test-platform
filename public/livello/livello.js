@@ -95,10 +95,6 @@ function renderStart() {
         <label for="studentName">Ім'я та прізвище</label>
         <input type="text" id="studentName" autocomplete="name" placeholder="Напр. Ганна Ковальська" />
       </div>
-      <div class="field">
-        <label for="contact">Telegram нікнейм чи номер телефону</label>
-        <input type="text" id="contact" autocomplete="tel" required placeholder="Щоб ми могли зв'язатися з тобою" />
-      </div>
       <div class="actions end">
         <button class="btn-primary" id="startBtn">Почати тест</button>
       </div>
@@ -109,17 +105,10 @@ function renderStart() {
       alert("Будь ласка, напиши своє ім'я та прізвище.");
       return;
     }
-    const contact = document.getElementById("contact").value.trim();
-    if (!contact) {
-      alert("Будь ласка, напиши свій Telegram нікнейм чи номер телефону, щоб ми могли з тобою зв'язатися.");
-      document.getElementById("contact").focus();
-      return;
-    }
     const order = {};
     test.items.forEach((it) => (order[it.id] = shuffle(it.options.map((_, i) => i))));
     s = {
       studentName: name,
-      contact,
       startedAt: Date.now(),
       index: 0,
       answers: {},
@@ -219,7 +208,6 @@ async function submit(timedOut) {
   appEl.innerHTML = `<div class="card"><p class="lead">${timedOut ? "Час вийшов ⏱ " : ""}Надсилаємо відповіді...</p></div>`;
   const payload = {
     studentName: s.studentName,
-    contact: s.contact,
     answers: s.answers,
     durationSec: Math.round((Date.now() - s.startedAt) / 1000),
     timedOut,
@@ -255,8 +243,10 @@ function renderDone(data, timedOut) {
     appEl.innerHTML = `
       <div class="card">
         <h2>Grazie, ${name}! 🇮🇹</h2>
-        <p class="lead">Тест надіслано. Наш адміністратор скоро тобі напише, розповість про твій рівень і надасть індивідуальний план його покращення.</p>
+        <p class="lead">Тест надіслано.</p>
+        ${contactFormHtml()}
       </div>`;
+    bindContactForm(data.id);
     return;
   }
   appEl.innerHTML = `
@@ -271,10 +261,57 @@ function renderDone(data, timedOut) {
       ${
         data.borderline
           ? `<div class="pl-note">Твій результат на межі двох рівнів. Радимо коротку розмову з викладачем — так ми точно підберемо групу.</div>`
-          : `<div class="pl-note">Цей тест перевіряє граматику й лексику. Остаточний рівень викладач підтвердить після короткої розмови.</div>`
+          : `<div class="pl-note">Цей тест перевіряє граматичний рівень.</div>`
       }
-      <p class="lead" style="margin-top:16px">Ти молодець! Головний адмін italica скоро тобі напише і надасть індивідуальний план покращення твого актуального рівня. Обіцяю, що ми знайдемо формат, який тобі точно підійде і виведе на новий етап у вивченні мови! <em>A presto!</em></p>
+      ${contactFormHtml()}
     </div>`;
+  bindContactForm(data.id);
+}
+
+function contactFormHtml() {
+  return `
+      <p class="lead" style="margin-top:16px">Ти молодець! Залиш свій телеграм, якщо хочеш навчатись у нас. У якості подарунку наш методист надасть тобі індивідуальний план покращення твого актуального рівня та менеджер підбере формат, який тобі точно підійде і виведе на новий етап у вивченні мови! <em>A presto!</em></p>
+      <div id="contactBox">
+        <div class="field">
+          <label for="contact">Telegram нікнейм чи номер телефону</label>
+          <input type="text" id="contact" autocomplete="tel" placeholder="Напр. @italica або +380..." />
+        </div>
+        <div class="actions end">
+          <button class="btn-primary" id="contactBtn">Надіслати</button>
+        </div>
+      </div>`;
+}
+
+function bindContactForm(resultId) {
+  const btn = document.getElementById("contactBtn");
+  const input = document.getElementById("contact");
+  if (!btn || !input) return;
+  const send = async () => {
+    const contact = input.value.trim();
+    if (!contact) {
+      alert("Будь ласка, напиши свій Telegram нікнейм чи номер телефону.");
+      input.focus();
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = "Надсилаємо...";
+    try {
+      const res = await fetch(`/api/placement/${encodeURIComponent(resultId)}/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contact }),
+      });
+      if (!res.ok) throw new Error();
+      document.getElementById("contactBox").innerHTML =
+        `<div class="pl-note">Дякуємо! Ми скоро тобі напишемо 💌</div>`;
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = "Надіслати";
+      alert("Не вдалося надіслати. Перевір інтернет і спробуй ще раз.");
+    }
+  };
+  btn.addEventListener("click", send);
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 }
 
 init();

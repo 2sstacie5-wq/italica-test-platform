@@ -75,7 +75,16 @@ function getPlacement(id) {
   return readPlacement().find((r) => r.id === id);
 }
 
+function updatePlacement(id, patch) {
+  const all = readPlacement();
+  const idx = all.findIndex((r) => r.id === id);
+  if (idx < 0) return null;
+  all[idx] = { ...all[idx], ...patch };
+  fs.writeFileSync(PLACEMENT_FILE, JSON.stringify(all, null, 2), "utf8");
+  return all[idx];
+}
+
 module.exports = {
   readAll, writeAll, addSubmission, getSubmission, updateSubmission, DATA_DIR,
-  readPlacement, addPlacement, getPlacement,
+  readPlacement, addPlacement, getPlacement, updatePlacement,
 };
