@@ -203,20 +203,20 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 .offer b{color:var(--brand-dark)}
 @media(max-width:640px){.rules-card{margin-left:0;padding:18px}}
 .news-sec{padding-top:34px}
-.news-box{background:#1F1A17;color:#F4EEE4;border-radius:24px;padding:28px 30px;position:relative;overflow:hidden}
-.news-box::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(229,73,30,.35),transparent 70%);pointer-events:none}
-.news-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.news-box{background:#F9DCCD;color:var(--ink);border-radius:24px;padding:28px 30px;position:relative;overflow:hidden}
+.news-box::after{content:"";position:absolute;right:-70px;top:-70px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.65),transparent 70%);pointer-events:none}
+.news-head{display:flex;align-items:center;gap:14px;margin-bottom:18px;position:relative;z-index:1}
 .news-label{background:var(--brand);color:#fff;font-weight:800;font-size:12px;letter-spacing:.14em;padding:6px 10px;border-radius:4px}
-.news-box h2{color:#fff;font-family:Montserrat,sans-serif;font-weight:800;letter-spacing:-.01em}
+.news-box h2{color:var(--ink);font-family:Montserrat,sans-serif;font-weight:800;letter-spacing:-.01em}
 .news-list{display:grid;gap:14px;position:relative;z-index:1}
-.news-item{background:#2A2420;border:1px solid #3A322C;border-radius:16px;padding:18px 20px}
-.news-item.pinned{border-color:var(--brand)}
-.news-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:#B5A99C;font-weight:600;margin-bottom:6px}
+.news-item{background:#fff;border:1px solid #F1C7B3;border-radius:16px;padding:18px 20px;box-shadow:0 4px 16px rgba(194,58,18,.06)}
+.news-item.pinned{border:2px solid var(--brand)}
+.news-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:6px}
 .news-pin{background:var(--brand);color:#fff;border-radius:4px;padding:2px 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
-.news-item h3{margin:0 0 8px;font-size:18px;color:#fff;font-weight:700}
-.news-text{font-size:15px;line-height:1.6;color:#E9E1D6;white-space:pre-line}
-.news-text a{color:#FF8A62;word-break:break-word}
-.news-empty{color:#B5A99C}
+.news-item h3{margin:0 0 8px;font-size:18px;color:var(--ink);font-weight:700}
+.news-text{font-size:15px;line-height:1.6;color:#3b3833;white-space:pre-line}
+.news-text a{color:var(--brand-dark);font-weight:600;word-break:break-word}
+.news-empty{color:var(--muted)}
 @media(max-width:640px){.news-box{padding:22px 18px;border-radius:18px}}
 .must{margin:0 0 18px 56px;border:2px solid var(--brand);border-radius:20px;background:#fff;overflow:hidden;box-shadow:0 10px 30px rgba(229,73,30,.10)}
 .must-tag{background:var(--brand);color:#fff;font-weight:800;font-size:13px;letter-spacing:.1em;padding:9px 20px;text-transform:uppercase}
@@ -233,7 +233,7 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 <header class="top"><div class="top-in">
   <img src="/images/logo.png" alt="italica" />
   <nav>
-    <a href="#novyny" style="background:#1F1A17;color:#fff">📰 Новини</a><a href="#navchannya" style="background:var(--brand);color:#fff">📚 Навчання</a><a href="#dajdzhest" style="background:var(--brand-light);color:var(--brand-dark)">🗓 Дайджест</a><a href="#pravyla">Правила для учнів</a><a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#testy">Тестування</a>
+    <a href="#novyny" style="background:#F9DCCD;color:var(--brand-dark)">📰 Novità</a><a href="#navchannya" style="background:var(--brand);color:#fff">📚 Навчання</a><a href="#dajdzhest" style="background:var(--brand-light);color:var(--brand-dark)">🗓 Дайджест</a><a href="#pravyla">Правила для учнів</a><a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#testy">Тестування</a>
   </nav>
   <button id="logout" style="flex:0 0 auto;font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;cursor:pointer">Вийти</button>
 </div></header>
@@ -257,7 +257,7 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 
 <section id="novyny" class="news-sec" data-search="новини оголошення воркшоп secret santa сікрет санта">
   <div class="news-box">
-    <div class="news-head"><span class="news-label">NEWS</span><h2>Новини</h2></div>
+    <div class="news-head"><span class="news-label">NOVITÀ</span><h2>Новини</h2></div>
     <div class="news-list" id="newsList"><div class="news-empty">Завантаження…</div></div>
   </div>
 </section>
