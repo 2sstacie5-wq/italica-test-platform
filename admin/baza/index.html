@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Доступи до бази · Italica</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" />
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Montserrat,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#faf6f0;color:#1a1a1a}
+.bar{background:#fff;border-bottom:1px solid #e9e2d8;padding:14px 24px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.bar b{font-size:16px}.bar a{color:#c25527;font-weight:600;text-decoration:none;font-size:14px}
+.wrap{max-width:900px;margin:28px auto;padding:0 20px 60px}
+.card{background:#fff;border:1px solid #e9e2d8;border-radius:16px;padding:22px 24px;margin-bottom:18px}
+h1{font-size:24px;margin:0 0 6px}p.m{color:#767066;margin:0 0 4px;font-size:14.5px;line-height:1.5}
+form{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+input{flex:1;min-width:200px;padding:11px 14px;border-radius:10px;border:1.5px solid #e9e2d8;font:inherit;font-size:15px}
+input:focus{outline:none;border-color:#c25527}
+button{font:inherit;font-weight:600;font-size:14px;padding:10px 16px;border-radius:10px;border:1px solid #e9e2d8;background:#fff;cursor:pointer}
+button.p{background:#c25527;border-color:#c25527;color:#fff}button.p:hover{background:#a4451e}
+button.d{color:#c94c4c}button:hover{border-color:#c25527}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:11px 8px;border-bottom:1px solid #f0ebe3;vertical-align:middle}
+th{color:#767066;font-weight:600;font-size:13px}
+code{white-space:nowrap;font-size:14px;background:#faf6f0;padding:4px 8px;border-radius:6px;font-weight:700;letter-spacing:.04em}
+.off td{opacity:.5}.off td:last-child{opacity:1}
+.badge{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px}
+.on-b{background:#e4f3ea;color:#3f8f5f}.off-b{background:#fbe6e6;color:#c94c4c}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.new{background:#e4f3ea;border-radius:12px;padding:14px 16px;margin-top:14px;font-size:14.5px;line-height:1.6}
+.empty{color:#767066;padding:16px 0}
+</style>
+</head>
+<body>
+<div class="bar"><b>Pannello insegnante</b><a href="/admin/">← Тести</a><a href="/baza/" target="_blank">Відкрити базу ↗</a></div>
+<main class="wrap">
+  <div class="card">
+    <h1>Доступи викладачів до бази</h1>
+    <p class="m">Кожен викладач входить на <b>italica-test.onrender.com/baza</b> зі своїм персональним кодом. Коли викладач іде з Італіки — натисніть <b>«Вимкнути»</b> або <b>«Видалити»</b>: доступ зникне одразу, навіть якщо він уже був залогінений.</p>
+    <form id="addForm"><input id="name" placeholder="Ім'я та прізвище викладача" required /><button class="p">+ Додати викладача</button></form>
+    <div id="newBox"></div>
+  </div>
+  <div class="card"><div id="list">Завантаження…</div></div>
+</main>
+<script>
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=d=>d?new Date(d).toLocaleString("uk-UA",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}):"—";
+async function api(url,opt={}){const r=await fetch(url,{...opt,headers:{"Content-Type":"application/json",...(opt.headers||{})}});if(!r.ok&&r.status!==204)throw new Error(await r.text());return r.status===204?null:r.json();}
+function msg(t){return `Привіт! Ось доступ до внутрішньої бази Італіки:\n${location.origin}/baza/\nТвій персональний код: ${t.code}\nКод особистий — не передавай його нікому.`;}
+function showNew(t,title){document.getElementById("newBox").innerHTML=`<div class="new"><b>${title}</b><br>${esc(t.name)}: <code>${esc(t.code)}</code><br><button style="margin-top:8px" id="copyMsg">📋 Скопіювати повідомлення для викладача</button></div>`;document.getElementById("copyMsg").onclick=()=>{navigator.clipboard.writeText(msg(t));document.getElementById("copyMsg").textContent="✓ Скопійовано";};}
+async function load(){
+  const list=await api("/api/admin/baza/teachers");
+  list.sort((a,b)=>(b.active-a.active)||a.name.localeCompare(b.name,"uk"));
+  document.getElementById("list").innerHTML=list.length?`<table><thead><tr><th>Викладач</th><th>Код</th><th>Статус</th><th>Останній вхід</th><th></th></tr></thead><tbody>${list.map(t=>`
+    <tr class="${t.active?"":"off"}"><td><b>${esc(t.name)}</b></td><td><code>${esc(t.code)}</code></td>
+    <td><span class="badge ${t.active?"on-b":"off-b"}">${t.active?"активний":"вимкнено"}</span></td><td>${fmt(t.lastSeen)}</td>
+    <td><div class="acts"><button data-a="copy" data-id="${t.id}">📋</button><button data-a="toggle" data-id="${t.id}">${t.active?"Вимкнути":"Увімкнути"}</button><button data-a="regen" data-id="${t.id}">Новий код</button><button class="d" data-a="del" data-id="${t.id}">Видалити</button></div></td></tr>`).join("")}</tbody></table>`:`<div class="empty">Поки нікого немає. Додайте першого викладача вище.</div>`;
+  document.querySelectorAll("[data-a]").forEach(b=>b.onclick=async()=>{
+    const t=list.find(x=>x.id===b.dataset.id);
+    if(b.dataset.a==="copy"){navigator.clipboard.writeText(msg(t));b.textContent="✓";return;}
+    if(b.dataset.a==="toggle"){await api(`/api/admin/baza/teachers/${t.id}`,{method:"PATCH",body:JSON.stringify({active:!t.active})});}
+    if(b.dataset.a==="regen"){if(!confirm(`Створити новий код для ${t.name}? Старий перестане працювати.`))return;const n=await api(`/api/admin/baza/teachers/${t.id}/regenerate`,{method:"POST"});showNew(n,"Новий код створено");}
+    if(b.dataset.a==="del"){if(!confirm(`Видалити ${t.name}? Доступ зникне одразу.`))return;await api(`/api/admin/baza/teachers/${t.id}`,{method:"DELETE"});}
+    load();
+  });
+}
+document.getElementById("addForm").onsubmit=async e=>{e.preventDefault();const n=document.getElementById("name");const t=await api("/api/admin/baza/teachers",{method:"POST",body:JSON.stringify({name:n.value})});n.value="";showNew(t,"Викладача додано ✓");load();};
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Вхід · Внутрішня база Італіки</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/png" href="/images/favicon.png" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" />
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Montserrat,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#faf6f0;color:#1a1a1a;padding:20px}
+.card{background:#fff;border:1px solid #e9e2d8;border-radius:20px;padding:36px 32px;max-width:420px;width:100%;box-shadow:0 6px 30px rgba(0,0,0,.05);text-align:center}
+img{width:72px;height:72px;border-radius:14px;margin-bottom:16px}
+h1{font-size:23px;margin:0 0 6px;font-weight:800}
+p{margin:0 0 22px;color:#767066;font-size:15px;line-height:1.5}
+input{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid #e9e2d8;font:inherit;font-size:17px;text-align:center;letter-spacing:.06em;text-transform:uppercase}
+input:focus{outline:none;border-color:#c25527}
+button{margin-top:12px;width:100%;padding:14px;border:none;border-radius:12px;background:#c25527;color:#fff;font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+button:hover{background:#a4451e}
+button:disabled{opacity:.5}
+.err{margin-top:14px;color:#c94c4c;font-size:14px;font-weight:600;min-height:20px}
+.hint{margin-top:18px;font-size:13px;color:#767066}
+</style>
+</head>
+<body>
+<form class="card" id="f">
+  <img src="/images/logo.png" alt="italica" />
+  <h1>Внутрішня база Італіки</h1>
+  <p>Введіть свій персональний код доступу. Його видає адміністратор Італіки.</p>
+  <input id="code" placeholder="ITALICA-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" required />
+  <button id="btn">Увійти</button>
+  <div class="err" id="err"></div>
+  <div class="hint">Немає коду або він не працює? Напишіть адміністратору.</div>
+</form>
+<script>
+const f=document.getElementById("f"), btn=document.getElementById("btn"), err=document.getElementById("err");
+f.addEventListener("submit", async (e) => {
+  e.preventDefault(); err.textContent=""; btn.disabled=true;
+  try {
+    const r = await fetch("/api/baza/login", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({code: document.getElementById("code").value})});
+    if (r.ok) { location.href = "/baza/"; return; }
+    err.textContent = r.status === 429 ? "Забагато спроб. Спробуйте за кілька хвилин." : "Код неправильний або доступ вимкнено.";
+  } catch (x) { err.textContent = "Немає зв'язку. Спробуйте ще раз."; }
+  btn.disabled=false;
+});
+</script>
+</body>
+</html>

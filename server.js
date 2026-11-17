@@ -11,6 +11,7 @@ const placementData = require("./placement-data");
 const placementDataV1 = require("./placement-data-v1");
 const { gradeSubmission } = require("./grading");
 const store = require("./store");
+const baza = require("./baza-store");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ if (!process.env.ADMIN_PASSWORD) {
   );
 }
 
+app.set("trust proxy", 1);
 app.use(express.json({ limit: "2mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -248,6 +250,40 @@ app.post("/api/percorso/s/:code/mark", pReady, (req, res) => {
   res.json({ ok: true });
 });
 
+
+// ---------- Внутрішня база для викладачів (/baza), вхід за персональним кодом ----------
+function readCookie(req, name) {
+  const m = (req.headers.cookie || "").split(/;\s*/).find((c) => c.startsWith(name + "="));
+  return m ? decodeURIComponent(m.slice(name.length + 1)) : null;
+}
+function bazaTeacher(req) { return baza.verify(readCookie(req, "baza_session")); }
+const loginTries = new Map();
+app.post("/api/baza/login", (req, res) => {
+  const ip = req.ip || "x"; const now = Date.now();
+  const rec = loginTries.get(ip) || { n: 0, t: now };
+  if (now - rec.t > 10 * 60 * 1000) { rec.n = 0; rec.t = now; }
+  if (rec.n >= 15) return res.status(429).json({ error: "too many" });
+  const t = baza.byCode((req.body || {}).code);
+  if (!t || !t.active) { rec.n++; loginTries.set(ip, rec); return res.status(401).json({ ok: false }); }
+  loginTries.delete(ip);
+  baza.update(t.id, { lastSeen: new Date().toISOString() });
+  const maxAge = 180 * 24 * 3600;
+  res.setHeader("Set-Cookie", `baza_session=${encodeURIComponent(baza.sign(t.id, t.version || 1))}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Lax${req.secure ? "; Secure" : ""}`);
+  res.json({ ok: true, name: t.name });
+});
+app.post("/api/baza/logout", (req, res) => {
+  res.setHeader("Set-Cookie", "baza_session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
+  res.json({ ok: true });
+});
+app.get(["/baza", "/baza/", "/baza/index.html"], (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  const t = bazaTeacher(req);
+  if (!t) return res.sendFile(path.join(__dirname, "baza", "login.html"));
+  const last = t.lastSeen ? new Date(t.lastSeen).getTime() : 0;
+  if (Date.now() - last > 3600 * 1000) baza.update(t.id, { lastSeen: new Date().toISOString() });
+  res.sendFile(path.join(__dirname, "baza", "index.html"));
+});
+
 // ---------- Area insegnante (protetta da password) ----------
 const adminAuth = basicAuth({
   users: { [ADMIN_USER]: ADMIN_PASSWORD },
@@ -257,6 +293,29 @@ const adminAuth = basicAuth({
 
 app.use("/admin", adminAuth, express.static(path.join(__dirname, "admin")));
 app.use("/api/admin", adminAuth);
+
+
+// ---------- Доступи викладачів до /baza ----------
+app.get("/api/admin/baza/teachers", (req, res) => res.json(baza.readAll()));
+app.post("/api/admin/baza/teachers", (req, res) => {
+  const name = String((req.body || {}).name || "").trim();
+  if (!name) return res.status(400).json({ error: "Вкажіть ім'я" });
+  res.json(baza.add(name));
+});
+app.patch("/api/admin/baza/teachers/:id", (req, res) => {
+  const b = req.body || {}; const patch = {};
+  if (typeof b.active === "boolean") patch.active = b.active;
+  if (typeof b.name === "string" && b.name.trim()) patch.name = b.name.trim().slice(0, 80);
+  const t = baza.update(req.params.id, patch);
+  if (!t) return res.status(404).json({ error: "Не знайдено" });
+  res.json(t);
+});
+app.post("/api/admin/baza/teachers/:id/regenerate", (req, res) => {
+  const t = baza.regenerate(req.params.id);
+  if (!t) return res.status(404).json({ error: "Не знайдено" });
+  res.json(t);
+});
+app.delete("/api/admin/baza/teachers/:id", (req, res) => { baza.remove(req.params.id); res.status(204).end(); });
 
 // ---------- Il mio percorso: викладацька частина ----------
 app.get("/api/admin/percorso/all", pReady, (req, res) => res.json(percorso.all()));
