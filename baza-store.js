@@ -1,23 +1,29 @@
-// Доступ викладачів до внутрішньої бази (/baza).
-// Кожен викладач має свій персональний код входу. Коли викладач іде з Італіки,
-// адмін вимикає або видаляє його в панелі /admin/baza — і доступ зникає одразу.
+// Доступ викладачів до внутрішньої бази (/baza): один спільний логін і пароль.
+// Коли викладач іде з Італіки, адмін змінює пароль у /admin/baza —
+// усі старі входи одразу стають недійсними.
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
 const DATA_DIR = path.join(__dirname, "data");
-const FILE = path.join(DATA_DIR, "baza-teachers.json");
+const FILE = path.join(DATA_DIR, "baza-config.json");
 const SECRET_FILE = path.join(DATA_DIR, "baza-secret");
 
-function ensure() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(FILE)) fs.writeFileSync(FILE, "[]", "utf8");
-}
-function readAll() {
+// Початкові дані (у репозиторії зберігається лише хеш пароля, не сам пароль).
+const DEFAULT = {
+  user: "italica.team",
+  salt: "2c460c4784b767391daeade2cb0c1b34",
+  hash: "4ea86bc92df771b3687420c543d480a5b1b527ce5755d5131991a11f91b9751e",
+  version: 1,
+  changedAt: null,
+};
+
+function ensure() { if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true }); }
+function config() {
   ensure();
-  try { return JSON.parse(fs.readFileSync(FILE, "utf8") || "[]"); } catch (e) { return []; }
+  try { return { ...DEFAULT, ...JSON.parse(fs.readFileSync(FILE, "utf8")) }; } catch (e) { return { ...DEFAULT }; }
 }
-function writeAll(list) { ensure(); fs.writeFileSync(FILE, JSON.stringify(list, null, 2), "utf8"); }
+function save(cfg) { ensure(); fs.writeFileSync(FILE, JSON.stringify(cfg, null, 2), "utf8"); }
 
 let secret = null;
 function getSecret() {
@@ -28,52 +34,28 @@ function getSecret() {
   return (secret = fs.readFileSync(SECRET_FILE, "utf8").trim());
 }
 
-const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // без схожих 0/O, 1/I
-function newCode() {
-  const bytes = crypto.randomBytes(6);
-  let s = "";
-  for (const b of bytes) s += ALPHABET[b % ALPHABET.length];
-  return "ITALICA-" + s;
-}
-const norm = (c) => String(c || "").trim().toUpperCase().replace(/\s+/g, "");
+const hashOf = (pw, salt) => crypto.scryptSync(String(pw), salt, 32).toString("hex");
+function eq(a, b) { const A = Buffer.from(a), B = Buffer.from(b); return A.length === B.length && crypto.timingSafeEqual(A, B); }
 
-function add(name) {
-  const list = readAll();
-  const codes = new Set(list.map((t) => t.code));
-  let code = newCode();
-  while (codes.has(code)) code = newCode();
-  const t = { id: crypto.randomUUID(), name: String(name).trim().slice(0, 80), code, active: true, createdAt: new Date().toISOString(), lastSeen: null, version: 1 };
-  list.push(t); writeAll(list); return t;
+function check(user, pw) {
+  const c = config();
+  return String(user || "").trim().toLowerCase() === c.user.toLowerCase() && eq(hashOf(pw, c.salt), c.hash);
 }
-function update(id, patch) {
-  const list = readAll(); const i = list.findIndex((t) => t.id === id);
-  if (i === -1) return null;
-  list[i] = { ...list[i], ...patch }; writeAll(list); return list[i];
+function setCredentials(user, pw) {
+  const c = config();
+  const salt = crypto.randomBytes(16).toString("hex");
+  const next = { user: String(user).trim(), salt, hash: hashOf(pw, salt), version: (c.version || 1) + 1, changedAt: new Date().toISOString() };
+  save(next); return next;
 }
-function regenerate(id) {
-  const list = readAll(); const t = list.find((x) => x.id === id);
-  if (!t) return null;
-  // нова версія робить недійсними всі старі входи цього викладача
-  return update(id, { code: newCode(), version: (t.version || 1) + 1 });
-}
-function remove(id) { writeAll(readAll().filter((t) => t.id !== id)); }
-function byCode(code) { const c = norm(code); return readAll().find((t) => t.code === c) || null; }
-function byId(id) { return readAll().find((t) => t.id === id) || null; }
-
-function sign(id, version) {
-  const payload = `${id}.${version}`;
-  const mac = crypto.createHmac("sha256", getSecret()).update(payload).digest("base64url");
-  return `${payload}.${mac}`;
+function sign() {
+  const v = String(config().version || 1);
+  return `${v}.${crypto.createHmac("sha256", getSecret()).update("baza." + v).digest("base64url")}`;
 }
 function verify(token) {
-  const parts = String(token || "").split(".");
-  if (parts.length !== 3) return null;
-  const [id, version, mac] = parts;
-  const good = crypto.createHmac("sha256", getSecret()).update(`${id}.${version}`).digest("base64url");
-  if (mac.length !== good.length || !crypto.timingSafeEqual(Buffer.from(mac), Buffer.from(good))) return null;
-  const t = byId(id);
-  if (!t || !t.active || String(t.version || 1) !== version) return null;
-  return t;
+  const [v, mac] = String(token || "").split(".");
+  if (!v || !mac || v !== String(config().version || 1)) return false;
+  return eq(mac, crypto.createHmac("sha256", getSecret()).update("baza." + v).digest("base64url"));
 }
+function info() { const c = config(); return { user: c.user, changedAt: c.changedAt, version: c.version }; }
 
-module.exports = { readAll, add, update, regenerate, remove, byCode, byId, sign, verify };
+module.exports = { check, setCredentials, sign, verify, info };

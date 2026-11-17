@@ -14,7 +14,7 @@ body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:c
 img{width:72px;height:72px;border-radius:14px;margin-bottom:16px}
 h1{font-size:23px;margin:0 0 6px;font-weight:800}
 p{margin:0 0 22px;color:#767066;font-size:15px;line-height:1.5}
-input{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid #e9e2d8;font:inherit;font-size:17px;text-align:center;letter-spacing:.06em;text-transform:uppercase}
+input{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid #e9e2d8;font:inherit;font-size:17px;text-align:center}
 input:focus{outline:none;border-color:#c25527}
 button{margin-top:12px;width:100%;padding:14px;border:none;border-radius:12px;background:#c25527;color:#fff;font:inherit;font-size:16px;font-weight:700;cursor:pointer}
 button:hover{background:#a4451e}
@@ -27,20 +27,21 @@ button:disabled{opacity:.5}
 <form class="card" id="f">
   <img src="/images/logo.png" alt="italica" />
   <h1>Внутрішня база Італіки</h1>
-  <p>Введіть свій персональний код доступу. Його видає адміністратор Італіки.</p>
-  <input id="code" placeholder="ITALICA-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" required />
+  <p>Увійдіть, щоб побачити матеріали для викладачів.</p>
+  <input id="user" placeholder="Логін" autocomplete="username" autocapitalize="off" spellcheck="false" required />
+  <input id="pw" type="password" placeholder="Пароль" autocomplete="current-password" required style="margin-top:10px" />
   <button id="btn">Увійти</button>
   <div class="err" id="err"></div>
-  <div class="hint">Немає коду або він не працює? Напишіть адміністратору.</div>
+  <div class="hint">Не пам'ятаєте логін чи пароль? Напишіть адміністратору.</div>
 </form>
 <script>
 const f=document.getElementById("f"), btn=document.getElementById("btn"), err=document.getElementById("err");
 f.addEventListener("submit", async (e) => {
   e.preventDefault(); err.textContent=""; btn.disabled=true;
   try {
-    const r = await fetch("/api/baza/login", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({code: document.getElementById("code").value})});
+    const r = await fetch("/api/baza/login", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({user: document.getElementById("user").value, password: document.getElementById("pw").value})});
     if (r.ok) { location.href = "/baza/"; return; }
-    err.textContent = r.status === 429 ? "Забагато спроб. Спробуйте за кілька хвилин." : "Код неправильний або доступ вимкнено.";
+    err.textContent = r.status === 429 ? "Забагато спроб. Спробуйте за кілька хвилин." : "Неправильний логін або пароль.";
   } catch (x) { err.textContent = "Немає зв'язку. Спробуйте ще раз."; }
   btn.disabled=false;
 });
