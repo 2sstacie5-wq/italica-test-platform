@@ -218,13 +218,22 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 .news-text a{color:#FF8A62;word-break:break-word}
 .news-empty{color:#B5A99C}
 @media(max-width:640px){.news-box{padding:22px 18px;border-radius:18px}}
+.must{margin:0 0 18px 56px;border:2px solid var(--brand);border-radius:20px;background:#fff;overflow:hidden;box-shadow:0 10px 30px rgba(229,73,30,.10)}
+.must-tag{background:var(--brand);color:#fff;font-weight:800;font-size:13px;letter-spacing:.1em;padding:9px 20px;text-transform:uppercase}
+.must-body{display:flex;gap:20px;align-items:center;justify-content:space-between;padding:18px 22px;flex-wrap:wrap}
+.must-body>div{flex:1;min-width:260px}
+.must h3{margin:0 0 6px;font-size:19px}
+.must p{margin:0;font-size:15px;color:#3b3833}
+.must .must-note{margin-top:8px;font-size:13.5px;color:var(--muted)}
+.must-btn{font-size:15px;padding:12px 20px}
+@media(max-width:640px){.must{margin-left:0}}
 </style>
 </head>
 <body>
 <header class="top"><div class="top-in">
   <img src="/images/logo.png" alt="italica" />
   <nav>
-    <a href="#novyny" style="background:#1F1A17;color:#fff">📰 Новини</a><a href="#navchannya" style="background:var(--brand);color:#fff">📚 Навчання</a><a href="#dajdzhest" style="background:var(--brand-light);color:var(--brand-dark)">🗓 Дайджест</a><a href="#pravyla">Правила для учнів</a><a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#treker">Трекер</a><a href="#testy">Тестування</a>
+    <a href="#novyny" style="background:#1F1A17;color:#fff">📰 Новини</a><a href="#navchannya" style="background:var(--brand);color:#fff">📚 Навчання</a><a href="#dajdzhest" style="background:var(--brand-light);color:var(--brand-dark)">🗓 Дайджест</a><a href="#pravyla">Правила для учнів</a><a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#testy">Тестування</a>
   </nav>
   <button id="logout" style="flex:0 0 auto;font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;cursor:pointer">Вийти</button>
 </div></header>
@@ -387,9 +396,20 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
   </div>
 </section>
 
-<section id="uroky" data-search="готові уроки курс a1 a2 b1 miro дошка основний додатковий запасний">
+<section id="uroky" data-search="готові уроки курс a1 a2 b1 miro дошка основний додатковий запасний трекер прогресу обовязково">
   <div class="sec-head"><span class="num">5</span><h2>Готові уроки</h2></div>
   <p class="lead">Ми поступово створюємо власну базу готових уроків для різних рівнів. Для A1 є два курси: основний і додатковий — для нових учнів пріоритет основний.</p>
+  <div class="must">
+    <div class="must-tag">❗ ОБОВʼЯЗКОВО для кожного учня</div>
+    <div class="must-body">
+      <div>
+        <h3>📈 Трекер прогресу учня</h3>
+        <p>Трекер <b>обовʼязково має бути на дошці кожного вашого учня</b> — незалежно від рівня й курсу. Він показує, які теми вже пройдені, що учень вивчає зараз, які теми потребують повторення та прогрес протягом навчання.</p>
+        <p class="must-note">Не забувайте оновлювати трекер у процесі навчання.</p>
+      </div>
+      <a class="btn must-btn" href="https://miro.com/app/board/uXjVEWk78R4=/?share_link_id=250123485932" target="_blank" rel="noopener">Відкрити шаблон трекера ↗</a>
+    </div>
+  </div>
   <div class="grid">
     <div class="card">
       <h3>Основний курс A1 <span class="tag ok">готовий · для нових учнів</span></h3>
@@ -469,20 +489,8 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
   </div></div>
 </section>
 
-<section id="treker" data-search="трекер прогресу учня шаблон дошка">
-  <div class="sec-head"><span class="num">10</span><h2>Трекер прогресу учня</h2></div>
-  <p class="lead">Трекер — <b>обов'язкова</b> частина дошки кожного учня.</p>
-  <div class="grid"><div class="card">
-    <h3>📈 Шаблон трекера</h3>
-    <p>Додайте його на дошку кожного вашого учня. Він показує:</p>
-    <ul><li>які теми вже пройдені;</li><li>що учень вивчає зараз;</li><li>які теми потребують повторення;</li><li>прогрес протягом навчання.</li></ul>
-    <div class="access">Не забувайте оновлювати трекер у процесі навчання.</div>
-    <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVEWk78R4=/?share_link_id=250123485932" target="_blank" rel="noopener">Відкрити шаблон трекера ↗</a></div>
-  </div></div>
-</section>
-
 <section id="testy" data-search="тестування тест a1 a2 b1 рівень сертифікат перевірка адмінка 75">
-  <div class="sec-head"><span class="num">11</span><h2>Тестування рівня</h2></div>
+  <div class="sec-head"><span class="num">10</span><h2>Тестування рівня</h2></div>
   <p class="lead">Тести на завершення рівня A1, A2, B1 і короткий загальний тест рівня для нових учнів. Роботи учнів ви перевіряєте в кабінеті (адмінці) кожного тесту.</p>
   <div class="grid">
     <div class="card"><h3>Тест A1</h3><p>Фінальний тест курсу A1 з письмовою та усною частиною.</p>
