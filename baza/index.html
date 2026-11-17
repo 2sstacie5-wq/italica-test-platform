@@ -26,6 +26,12 @@ a{color:var(--brand)}
 .hero-in{max-width:1080px;margin:0 auto;padding:46px 22px 38px}
 .hero h1{font-size:clamp(28px,4vw,40px);margin:0 0 8px;font-weight:800;letter-spacing:-.01em}
 .hero p{margin:0;color:var(--muted);font-size:17px;max-width:640px}
+.lib-cta{margin-top:22px;display:flex;align-items:center;gap:16px;max-width:620px;background:var(--brand);color:#fff;text-decoration:none;border-radius:16px;padding:16px 20px;box-shadow:0 6px 22px rgba(194,85,39,.25);transition:transform .15s,background .15s}
+.lib-cta:hover{background:var(--brand-dark);transform:translateY(-1px)}
+.lib-ico{font-size:30px;line-height:1}
+.lib-cta b{display:block;font-size:19px}
+.lib-cta small{display:block;font-size:13.5px;opacity:.9;margin-top:2px}
+.lib-arr{margin-left:auto;font-size:24px;font-weight:700}
 .search{margin-top:22px;position:relative;max-width:520px}
 .search input{width:100%;padding:14px 18px 14px 44px;border-radius:12px;border:1.5px solid var(--line);font:inherit;font-size:16px;background:#fff}
 .search input:focus{outline:none;border-color:var(--brand)}
@@ -101,7 +107,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
 <header class="top"><div class="top-in">
   <img src="/images/logo.png" alt="italica" />
   <nav>
-    <a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#navchannya">Навчання</a><a href="#treker">Трекер</a><a href="#testy">Тестування</a>
+    <a href="#navchannya" style="background:var(--brand);color:#fff">📚 Навчання</a><a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#treker">Трекер</a><a href="#testy">Тестування</a>
   </nav>
   <button id="logout" style="flex:0 0 auto;font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;cursor:pointer">Вийти</button>
 </div></header>
@@ -109,6 +115,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
 <div class="hero"><div class="hero-in">
   <h1>Внутрішня база Італіки</h1>
   <p>Навігатор для маестр: де лежать матеріали, готові уроки, шаблони, трекер прогресу і тести — і як усім цим користуватися.</p>
+  <a href="#navchannya" class="lib-cta"><span class="lib-ico">📚</span><span><b>Бібліотека навчань</b><small>методика, робота з учнями, перший урок, фідбек, ШІ — усі записи тут</small></span><span class="lib-arr">→</span></a>
   <div class="search">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
     <input id="q" type="search" placeholder="Пошук: A2, шаблони, тест, силабус…" autocomplete="off" />
@@ -122,109 +129,8 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
     <p style="margin:8px 0 0">Можна використовувати власні авторські матеріали, якщо вони відповідають рамкам Італіки.</p>
   </div>
 
-<section id="pidruchnyky" data-search="підручники база blinklearning граматика лексика аудіо вправи">
-  <div class="sec-head"><span class="num">1</span><h2>База підручників</h2></div>
-  <p class="lead">Наша внутрішня база підручників для підготовки та побудови уроків.</p>
-  <div class="grid">
-    <div class="card">
-      <h3>📚 Платформа з підручниками</h3>
-      <p>Як використовувати:</p>
-      <ul><li>як основу для уроку з нуля;</li><li>для пошуку вправ;</li><li>для граматики й лексики;</li><li>для аудіоматеріалів;</li><li>як додаткове джерело під час підготовки.</li></ul>
-      <div class="access">🔑 <b>Email:</b> 2sstacie5@gmail.com<br>🔑 <b>Пароль:</b> 24italica</div>
-      <div class="btns"><a class="btn" href="https://www.blinklearning.com/v/1703163655/themes/tmpux/launch.php#content" target="_blank" rel="noopener">Відкрити платформу ↗</a></div>
-    </div>
-  </div>
-  
-  <div class="box no"><h4>🚫 Що не можна використовувати</h4>
-    <ul><li>російські матеріали;</li><li>радянські матеріали;</li><li>матеріали, створені або поширені іншими школами італійської;</li><li>матеріали, які ви отримали в іншій школі й хочете перенести в Італіку.</li></ul>
-    <p style="margin:8px 0 0">Якщо матеріал не ваш і ви не маєте права ним користуватися — не додавайте його в уроки.</p>
-  </div>
-</section>
-
-<section id="uroky" data-search="готові уроки курс a1 a2 b1 miro дошка основний додатковий запасний">
-  <div class="sec-head"><span class="num">2</span><h2>Готові уроки</h2></div>
-  <p class="lead">Ми поступово створюємо власну базу готових уроків для різних рівнів. Для A1 є два курси: основний і додатковий — для нових учнів пріоритет основний.</p>
-  <div class="grid">
-    <div class="card">
-      <h3>Основний курс A1 <span class="tag ok">готовий · для нових учнів</span></h3>
-      <p>Курс повністю готовий — це актуальний A1, який ми використовуємо зараз. Усі <b>нові учні</b> — саме сюди.</p>
-      <div class="access">🔑 <b>Пароль до дошки:</b> italicateam26</div>
-      <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVEPMXvJ8=/?share_link_id=782116440475" target="_blank" rel="noopener">Основний A1 ↗</a></div>
-    </div>
-    <div class="card">
-      <h3>Додатковий курс A1 <span class="tag alt">запасний</span></h3>
-      <p>Залишаємо як запасний / додатковий матеріал. Якщо ви вже почали з учнем цей курс — не переходьте посеред навчання: завершіть його, а потім ідіть на A2.</p>
-      
-      <div class="access">🔑 <b>Пароль до дошки:</b> italicateam26</div>
-      <div class="btns"><a class="btn ghost" href="https://miro.com/app/board/uXjVEMg2mPQ=/?share_link_id=258721097376" target="_blank" rel="noopener">Додатковий A1 ↗</a></div>
-    </div>
-    <div class="card">
-      <h3>A2 <span class="tag wip">у розробці</span></h3>
-      <p>Курс ще розробляється — кількість готових уроків поступово зростає.</p>
-      <div class="access">🔑 <b>Пароль до дошки:</b> italicateam26</div>
-      <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVHMxYbj8=/" target="_blank" rel="noopener">Відкрити A2 у Miro ↗</a></div>
-    </div>
-    <div class="card">
-      <h3>B1 <span class="tag wip">у розробці</span></h3>
-      <p>Курс ще розробляється — кількість готових уроків поступово зростає.</p>
-      <div class="access">🔑 <b>Пароль до дошки:</b> italicateam26</div>
-      <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVHnAM5HU=/" target="_blank" rel="noopener">Відкрити B1 у Miro ↗</a></div>
-    </div>
-  </div>
-  <div class="box tip"><h4>❗ Ще раз наголошуємо!</h4>
-    Ми працюємо за <b>основним A1</b> — для нових учнів використовуємо <b>виключно його</b>.<br>
-    Додатковий курс — для того, щоб мати альтернативний варіант для повторення, або для тих, хто вже почав його пару місяців тому і зараз у процесі проходження.
-  </div>
-</section>
-
-<section id="sylabusy" data-search="силабуси програма теми цілі a1 a2 b1 b2 додаткові матеріали">
-  <div class="sec-head"><span class="num">3</span><h2>Силабуси</h2></div>
-  <p class="lead">Програма кожного рівня: теми й цілі уроків, навички, цільова лексика. Нижче можна швидко переглянути теми, а повну таблицю відкрити в Google Sheets.</p>
-  <div class="tabs" id="sylTabs"></div>
-  <div class="syl">
-    <div class="syl-head">
-      <input id="sylQ" type="search" placeholder="Пошук теми в силабусі…" />
-      <span id="sylBtns" class="btns" style="padding:0;margin:0"></span>
-    </div>
-    <div id="sylGoals"></div>
-    <div class="lessons" id="sylList"></div>
-  </div>
-</section>
-
-<section id="shablony" data-search="банк шаблонів miro оформлення дошки">
-  <div class="sec-head"><span class="num">4</span><h2>Банк шаблонів Miro</h2></div>
-  <p class="lead">Шаблони для оформлення уроків і дошок у Miro.</p>
-  <div class="grid"><div class="card">
-    <h3>🎨 Банк шаблонів</h3>
-    <p>Беріть звідси, щоб ваші дошки були:</p>
-    <ul><li>структурованими;</li><li>зрозумілими;</li><li>зручними для учня;</li><li>візуально охайними.</li></ul>
-    <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVHEKFyoI=/?share_link_id=677310928425" target="_blank" rel="noopener">Відкрити банк шаблонів ↗</a></div>
-  </div></div>
-</section>
-
-<section id="khrystyna" data-search="скарб христини автентичні матеріали ідеї уроки">
-  <div class="sec-head"><span class="num">5</span><h2>«Скарб Христини»</h2></div>
-  <p class="lead">Авторські матеріали маестри Христини. Христина особливо любить створювати автентичні уроки, тож ми зберігаємо її розробки як окрему базу ідей.</p>
-  <div class="grid"><div class="card">
-    <h3>💎 Скарб Христини</h3>
-    <ul><li>автентичні матеріали;</li><li>готові уроки;</li><li>цікаві ідеї для занять;</li><li>розробки, які можна адаптувати під своїх учнів.</li></ul>
-    <div class="access">Використовуйте відповідно до правил Італіки й не копіюйте чужі авторські розробки без дозволу.</div>
-    <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVJQhuTJE=/?share_link_id=643116307316" target="_blank" rel="noopener">Відкрити ↗</a></div>
-  </div></div>
-</section>
-
-<section id="rozrobky" data-search="розробки готових уроків автентика методичні">
-  <div class="sec-head"><span class="num">6</span><h2>Розробки готових уроків</h2></div>
-  <p class="lead">Методичні розробки й автентичні матеріали для створення уроків за структурою Італіки.</p>
-  <div class="grid"><div class="card">
-    <h3>🛠 Розробки (автентика)</h3>
-    <ul><li>створювати уроки за структурою Італіки;</li><li>знаходити готові рішення;</li><li>економити час на підготовці;</li><li>урізноманітнювати заняття.</li></ul>
-    <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVIXmFU6c=/?share_link_id=959889265898" target="_blank" rel="noopener">Відкрити розробки ↗</a></div>
-  </div></div>
-</section>
-
 <section id="navchannya" data-search="бібліотека навчань навчання методика планування фідбек коучинг підлітки групове голос ші miro перший урок вправи">
-  <div class="sec-head"><span class="num">7</span><h2>Бібліотека навчань</h2></div>
+  <div class="sec-head"><span class="num">1</span><h2>Бібліотека навчань</h2></div>
   <p class="lead">Записи наших навчань для маестр: методика, робота з учнями, професійні навички.</p>
   <h3 class="sub">Методика та планування</h3>
   <div class="grid">
@@ -307,6 +213,107 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
     </div>
     </div>
   </section>
+
+<section id="pidruchnyky" data-search="підручники база blinklearning граматика лексика аудіо вправи">
+  <div class="sec-head"><span class="num">2</span><h2>База підручників</h2></div>
+  <p class="lead">Наша внутрішня база підручників для підготовки та побудови уроків.</p>
+  <div class="grid">
+    <div class="card">
+      <h3>📚 Платформа з підручниками</h3>
+      <p>Як використовувати:</p>
+      <ul><li>як основу для уроку з нуля;</li><li>для пошуку вправ;</li><li>для граматики й лексики;</li><li>для аудіоматеріалів;</li><li>як додаткове джерело під час підготовки.</li></ul>
+      <div class="access">🔑 <b>Email:</b> 2sstacie5@gmail.com<br>🔑 <b>Пароль:</b> 24italica</div>
+      <div class="btns"><a class="btn" href="https://www.blinklearning.com/v/1703163655/themes/tmpux/launch.php#content" target="_blank" rel="noopener">Відкрити платформу ↗</a></div>
+    </div>
+  </div>
+  
+  <div class="box no"><h4>🚫 Що не можна використовувати</h4>
+    <ul><li>російські матеріали;</li><li>радянські матеріали;</li><li>матеріали, створені або поширені іншими школами італійської;</li><li>матеріали, які ви отримали в іншій школі й хочете перенести в Італіку.</li></ul>
+    <p style="margin:8px 0 0">Якщо матеріал не ваш і ви не маєте права ним користуватися — не додавайте його в уроки.</p>
+  </div>
+</section>
+
+<section id="uroky" data-search="готові уроки курс a1 a2 b1 miro дошка основний додатковий запасний">
+  <div class="sec-head"><span class="num">3</span><h2>Готові уроки</h2></div>
+  <p class="lead">Ми поступово створюємо власну базу готових уроків для різних рівнів. Для A1 є два курси: основний і додатковий — для нових учнів пріоритет основний.</p>
+  <div class="grid">
+    <div class="card">
+      <h3>Основний курс A1 <span class="tag ok">готовий · для нових учнів</span></h3>
+      <p>Курс повністю готовий — це актуальний A1, який ми використовуємо зараз. Усі <b>нові учні</b> — саме сюди.</p>
+      <div class="access">🔑 <b>Пароль до дошки:</b> italicateam26</div>
+      <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVEPMXvJ8=/?share_link_id=782116440475" target="_blank" rel="noopener">Основний A1 ↗</a></div>
+    </div>
+    <div class="card">
+      <h3>Додатковий курс A1 <span class="tag alt">запасний</span></h3>
+      <p>Залишаємо як запасний / додатковий матеріал. Якщо ви вже почали з учнем цей курс — не переходьте посеред навчання: завершіть його, а потім ідіть на A2.</p>
+      
+      <div class="access">🔑 <b>Пароль до дошки:</b> italicateam26</div>
+      <div class="btns"><a class="btn ghost" href="https://miro.com/app/board/uXjVEMg2mPQ=/?share_link_id=258721097376" target="_blank" rel="noopener">Додатковий A1 ↗</a></div>
+    </div>
+    <div class="card">
+      <h3>A2 <span class="tag wip">у розробці</span></h3>
+      <p>Курс ще розробляється — кількість готових уроків поступово зростає.</p>
+      <div class="access">🔑 <b>Пароль до дошки:</b> italicateam26</div>
+      <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVHMxYbj8=/" target="_blank" rel="noopener">Відкрити A2 у Miro ↗</a></div>
+    </div>
+    <div class="card">
+      <h3>B1 <span class="tag wip">у розробці</span></h3>
+      <p>Курс ще розробляється — кількість готових уроків поступово зростає.</p>
+      <div class="access">🔑 <b>Пароль до дошки:</b> italicateam26</div>
+      <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVHnAM5HU=/" target="_blank" rel="noopener">Відкрити B1 у Miro ↗</a></div>
+    </div>
+  </div>
+  <div class="box tip"><h4>❗ Ще раз наголошуємо!</h4>
+    Ми працюємо за <b>основним A1</b> — для нових учнів використовуємо <b>виключно його</b>.<br>
+    Додатковий курс — для того, щоб мати альтернативний варіант для повторення, або для тих, хто вже почав його пару місяців тому і зараз у процесі проходження.
+  </div>
+</section>
+
+<section id="sylabusy" data-search="силабуси програма теми цілі a1 a2 b1 b2 додаткові матеріали">
+  <div class="sec-head"><span class="num">4</span><h2>Силабуси</h2></div>
+  <p class="lead">Програма кожного рівня: теми й цілі уроків, навички, цільова лексика. Нижче можна швидко переглянути теми, а повну таблицю відкрити в Google Sheets.</p>
+  <div class="tabs" id="sylTabs"></div>
+  <div class="syl">
+    <div class="syl-head">
+      <input id="sylQ" type="search" placeholder="Пошук теми в силабусі…" />
+      <span id="sylBtns" class="btns" style="padding:0;margin:0"></span>
+    </div>
+    <div id="sylGoals"></div>
+    <div class="lessons" id="sylList"></div>
+  </div>
+</section>
+
+<section id="shablony" data-search="банк шаблонів miro оформлення дошки">
+  <div class="sec-head"><span class="num">5</span><h2>Банк шаблонів Miro</h2></div>
+  <p class="lead">Шаблони для оформлення уроків і дошок у Miro.</p>
+  <div class="grid"><div class="card">
+    <h3>🎨 Банк шаблонів</h3>
+    <p>Беріть звідси, щоб ваші дошки були:</p>
+    <ul><li>структурованими;</li><li>зрозумілими;</li><li>зручними для учня;</li><li>візуально охайними.</li></ul>
+    <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVHEKFyoI=/?share_link_id=677310928425" target="_blank" rel="noopener">Відкрити банк шаблонів ↗</a></div>
+  </div></div>
+</section>
+
+<section id="khrystyna" data-search="скарб христини автентичні матеріали ідеї уроки">
+  <div class="sec-head"><span class="num">6</span><h2>«Скарб Христини»</h2></div>
+  <p class="lead">Авторські матеріали маестри Христини. Христина особливо любить створювати автентичні уроки, тож ми зберігаємо її розробки як окрему базу ідей.</p>
+  <div class="grid"><div class="card">
+    <h3>💎 Скарб Христини</h3>
+    <ul><li>автентичні матеріали;</li><li>готові уроки;</li><li>цікаві ідеї для занять;</li><li>розробки, які можна адаптувати під своїх учнів.</li></ul>
+    <div class="access">Використовуйте відповідно до правил Італіки й не копіюйте чужі авторські розробки без дозволу.</div>
+    <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVJQhuTJE=/?share_link_id=643116307316" target="_blank" rel="noopener">Відкрити ↗</a></div>
+  </div></div>
+</section>
+
+<section id="rozrobky" data-search="розробки готових уроків автентика методичні">
+  <div class="sec-head"><span class="num">7</span><h2>Розробки готових уроків</h2></div>
+  <p class="lead">Методичні розробки й автентичні матеріали для створення уроків за структурою Італіки.</p>
+  <div class="grid"><div class="card">
+    <h3>🛠 Розробки (автентика)</h3>
+    <ul><li>створювати уроки за структурою Італіки;</li><li>знаходити готові рішення;</li><li>економити час на підготовці;</li><li>урізноманітнювати заняття.</li></ul>
+    <div class="btns"><a class="btn" href="https://miro.com/app/board/uXjVIXmFU6c=/?share_link_id=959889265898" target="_blank" rel="noopener">Відкрити розробки ↗</a></div>
+  </div></div>
+</section>
 
 <section id="treker" data-search="трекер прогресу учня шаблон дошка">
   <div class="sec-head"><span class="num">8</span><h2>Трекер прогресу учня</h2></div>
