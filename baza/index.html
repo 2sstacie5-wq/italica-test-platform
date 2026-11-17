@@ -186,13 +186,29 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 @media(max-width:640px){.lead,.grid,.box,.steps,.flow,.tabs,.syl,.cal,.ev-list,h3.sub{margin-left:0}.hero .flower{width:210px;opacity:.55}.hero-in{padding:44px 18px 40px}}
 .hero h1{font-family:Montserrat,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-weight:800;letter-spacing:-.025em}
 .hero h1 em{font-weight:800}
+.rules-card{margin-left:56px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px 26px}
+.rl{margin:0;padding-left:0;list-style:none;counter-reset:r;display:grid;gap:12px}
+.rl li{counter-increment:r;display:grid;grid-template-columns:34px 1fr;gap:12px;font-size:15px;line-height:1.55}
+.rl li::before{content:counter(r);width:30px;height:30px;border-radius:4px;background:var(--brand);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.rt{color:var(--brand-dark);font-size:17px}
+.rtable-wrap{overflow-x:auto;margin:14px 0}
+.rtable{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:14.5px}
+.rtable th{background:var(--brand);color:#fff;font-weight:700;padding:11px 12px;text-align:center;font-size:13.5px}
+.rtable th:first-child,.rtable td:first-child{text-align:left}
+.rtable td{padding:11px 12px;border-top:1px solid var(--line);text-align:center}
+.rtable tr:nth-child(even) td{background:var(--paper)}
+.rtable .lim{color:var(--brand);font-weight:800;font-size:16px}
+.muted-s{font-size:13.5px;color:var(--muted);margin:6px 0 0}
+.offer{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line);font-size:13.5px;color:var(--muted)}
+.offer b{color:var(--brand-dark)}
+@media(max-width:640px){.rules-card{margin-left:0;padding:18px}}
 </style>
 </head>
 <body>
 <header class="top"><div class="top-in">
   <img src="/images/logo.png" alt="italica" />
   <nav>
-    <a href="#navchannya" style="background:var(--brand);color:#fff">📚 Навчання</a><a href="#dajdzhest" style="background:var(--brand-light);color:var(--brand-dark)">🗓 Дайджест</a><a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#treker">Трекер</a><a href="#testy">Тестування</a>
+    <a href="#navchannya" style="background:var(--brand);color:#fff">📚 Навчання</a><a href="#dajdzhest" style="background:var(--brand-light);color:var(--brand-dark)">🗓 Дайджест</a><a href="#pravyla">Правила для учнів</a><a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#treker">Трекер</a><a href="#testy">Тестування</a>
   </nav>
   <button id="logout" style="flex:0 0 auto;font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;cursor:pointer">Вийти</button>
 </div></header>
@@ -314,8 +330,23 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
   <div class="ev-list" id="evList"></div>
 </section>
 
+<section id="pravyla" data-search="правила учнів індивідуальні парні групові абонемент перенесення оплата тривога заморозка тривалість">
+  <div class="sec-head"><span class="num">3</span><h2>Правила для учнів</h2></div>
+  <p class="lead">Правила, які діють для учнів Італіки. Знайте їх, щоб відповідати учням однаково.</p>
+  <div class="tabs" id="rTabs">
+    <button class="tab on" data-r="ind">Індивідуальні</button><button class="tab" data-r="par">Парні</button><button class="tab" data-r="grp">Групові</button><button class="tab" data-r="abo">Абонементи</button>
+  </div>
+  <div class="rules-card">
+    <div class="rp" data-r="ind"><ol class="rl"><li><span><b>Тривалість</b> індивідуального уроку — <b>50 хвилин</b>.</span></li><li><span>Перенесення заняття відбувається <b>максимум за 3 години до</b> його початку, в іншому разі Учень зобовʼязаний оплатити 100% від вартості заняття.</span></li><li><span><b>Оплата</b> за навчання відбувається <b>за 24 години до початку заняття</b> — в іншому разі викладач має право не надавати послугу.</span></li><li><span>Якщо під час заняття в регіоні, де перебуває Учень / Викладач, вмикається <b>сигнал повітряної тривоги</b>, кожен має право призупинити заняття.</span></li><li><span>Ми ведемо <b>відеозапис уроку</b> для контролю навчального прогресу.</span></li><li><span>Можлива <b>заморозка абонементу</b> 1 раз на 180 днів, строком до 14 днів.</span></li></ol></div>
+    <div class="rp hidden" data-r="par"><ol class="rl"><li><span><b>Тривалість</b> парного уроку — <b>50–60 хвилин</b>.</span></li><li><span>Перенесення заняття відбувається <b>максимум за 3 години до</b> його початку <b>за згодою іншого студента</b>, в іншому разі цей урок підлягає під 100% оплату.</span></li><li><span><b>Оплата</b> за навчання відбувається <b>за 24 години до початку заняття</b> — в іншому разі викладач має право не надавати послугу.</span></li><li><span><b>Мінімальна кількість</b> занять за місяць — <b>4</b>.</span></li><li><span>Якщо під час заняття в регіоні, де перебуває Учень / Викладач, вмикається <b>сигнал повітряної тривоги</b>, кожен має право призупинити заняття.</span></li><li><span>Ми ведемо <b>відеозапис уроку</b> для контролю навчального прогресу.</span></li><li><span>Можлива <b>заморозка абонементу</b> 1 раз на 180 днів, строком до 14 днів.</span></li><li><span>Відпрацювання оплаченого заняття в групах / парах відбувається шляхом надання доступу до відеозапису заняття.</span></li></ol></div>
+    <div class="rp hidden" data-r="grp"><ol class="rl"><li><span><b>Групові заняття оплачуються абонементом</b> та проводяться за узгодженим розкладом.</span></li><li><span><b>Якщо Учень пропускає групове заняття, воно не переноситься і не компенсується.</b> Заняття відбувається за розкладом для всієї групи. У разі пропуску Учень отримує відеозапис уроку та домашнє завдання (якщо запис передбачено курсом), але вартість уроку не повертається.</span></li><li><span><b>Якщо на заняття не приходить вся група</b> — викладач робить відеозапис заняття з поясненням нового матеріалу та додає домашнє завдання на дошку; це заняття для всієї групи вважається пройденим та підлягає під 100% оплату.</span></li><li><span><b>Перенесення групових уроків відбувається лише з ініціативи Виконавця (викладача)</b> — наприклад, у разі форс-мажору, відключення світла, технічної неможливості провести урок або інших обставин. Учень не може самостійно вимагати перенесення групового уроку.</span></li><li><span><b>Запізнення на заняття не продовжує його тривалість.</b> Час очікування — 15 хв, далі заняття вважається проведеним.</span></li><li><span><b>Склад групи може змінюватися.</b> Виконавець має право додавати / замінювати учасників групи без попереднього погодження з учнем.</span></li><li><span><b>Повернення коштів після складання розкладу та початку занять не здійснюється.</b></span></li><li><span><b>Тривалість групового заняття</b> — 60–70 хв. Якщо присутні 2 учні чи менше — 50–60 хв.</span></li><li><span>Ми ведемо <b>відеозапис уроку</b> для контролю навчального прогресу.</span></li></ol></div>
+    <div class="rp hidden" data-r="abo"><p><b class="rt">Термін дії абонементу</b><br>Абонемент активується з моменту зарахування оплати та діє протягом розрахункового періоду, який залежить від кількості обраних занять і частоти їх проведення.</p><div class="rtable-wrap"><table class="rtable"><thead><tr><th>Абонемент</th><th>1 раз на тиждень</th><th>2 рази на тиждень</th><th>Ліміт перенесень</th></tr></thead><tbody><tr><td><b>4 заняття</b></td><td>45 днів</td><td>45 днів</td><td class="lim">1</td></tr><tr><td><b>8 занять</b></td><td>75 днів</td><td>45 днів</td><td class="lim">2</td></tr><tr><td><b>16 занять</b></td><td>135 днів</td><td>75 днів</td><td class="lim">4</td></tr><tr><td><b>24 заняття</b></td><td>195 днів</td><td>105 днів</td><td class="lim">6</td></tr><tr><td><b>32 заняття</b></td><td>255 днів</td><td>135 днів</td><td class="lim">8</td></tr></tbody></table></div><p class="muted-s">Терміни вказані в календарних днях. Ліміт перенесень залежить від кількості занять та обраного графіку.</p><p class="muted-s"><i>Перенесені заняття мають бути використані виключно в межах встановленого терміну дії відповідного абонемента.</i></p></div>
+    <div class="offer">* Перед оплатою учню надсилається <b>публічна оферта</b> з детальними правилами, де можна краще з ними ознайомитись.</div>
+  </div>
+</section>
+
 <section id="pidruchnyky" data-search="підручники база blinklearning граматика лексика аудіо вправи">
-  <div class="sec-head"><span class="num">3</span><h2>База підручників</h2></div>
+  <div class="sec-head"><span class="num">4</span><h2>База підручників</h2></div>
   <p class="lead">Наша внутрішня база підручників для підготовки та побудови уроків.</p>
   <div class="grid">
     <div class="card">
@@ -334,7 +365,7 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 </section>
 
 <section id="uroky" data-search="готові уроки курс a1 a2 b1 miro дошка основний додатковий запасний">
-  <div class="sec-head"><span class="num">4</span><h2>Готові уроки</h2></div>
+  <div class="sec-head"><span class="num">5</span><h2>Готові уроки</h2></div>
   <p class="lead">Ми поступово створюємо власну базу готових уроків для різних рівнів. Для A1 є два курси: основний і додатковий — для нових учнів пріоритет основний.</p>
   <div class="grid">
     <div class="card">
@@ -370,7 +401,7 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 </section>
 
 <section id="sylabusy" data-search="силабуси програма теми цілі a1 a2 b1 b2 додаткові матеріали">
-  <div class="sec-head"><span class="num">5</span><h2>Силабуси</h2></div>
+  <div class="sec-head"><span class="num">6</span><h2>Силабуси</h2></div>
   <p class="lead">Програма кожного рівня: теми й цілі уроків, навички, цільова лексика. Нижче можна швидко переглянути теми, а повну таблицю відкрити в Google Sheets.</p>
   <div class="tabs" id="sylTabs"></div>
   <div class="syl">
@@ -384,7 +415,7 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 </section>
 
 <section id="shablony" data-search="банк шаблонів miro оформлення дошки">
-  <div class="sec-head"><span class="num">6</span><h2>Банк шаблонів Miro</h2></div>
+  <div class="sec-head"><span class="num">7</span><h2>Банк шаблонів Miro</h2></div>
   <p class="lead">Шаблони для оформлення уроків і дошок у Miro.</p>
   <div class="grid"><div class="card">
     <h3>🎨 Банк шаблонів</h3>
@@ -395,7 +426,7 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 </section>
 
 <section id="khrystyna" data-search="скарб христини автентичні матеріали ідеї уроки">
-  <div class="sec-head"><span class="num">7</span><h2>«Скарб Христини»</h2></div>
+  <div class="sec-head"><span class="num">8</span><h2>«Скарб Христини»</h2></div>
   <p class="lead">Авторські матеріали маестри Христини. Христина особливо любить створювати автентичні уроки, тож ми зберігаємо її розробки як окрему базу ідей.</p>
   <div class="grid"><div class="card">
     <h3>💎 Скарб Христини</h3>
@@ -406,7 +437,7 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 </section>
 
 <section id="rozrobky" data-search="розробки готових уроків автентика методичні">
-  <div class="sec-head"><span class="num">8</span><h2>Розробки готових уроків</h2></div>
+  <div class="sec-head"><span class="num">9</span><h2>Розробки готових уроків</h2></div>
   <p class="lead">Методичні розробки й автентичні матеріали для створення уроків за структурою Італіки.</p>
   <div class="grid"><div class="card">
     <h3>🛠 Розробки (автентика)</h3>
@@ -416,7 +447,7 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 </section>
 
 <section id="treker" data-search="трекер прогресу учня шаблон дошка">
-  <div class="sec-head"><span class="num">9</span><h2>Трекер прогресу учня</h2></div>
+  <div class="sec-head"><span class="num">10</span><h2>Трекер прогресу учня</h2></div>
   <p class="lead">Трекер — <b>обов'язкова</b> частина дошки кожного учня.</p>
   <div class="grid"><div class="card">
     <h3>📈 Шаблон трекера</h3>
@@ -428,7 +459,7 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 </section>
 
 <section id="testy" data-search="тестування тест a1 a2 b1 рівень сертифікат перевірка адмінка 75">
-  <div class="sec-head"><span class="num">10</span><h2>Тестування рівня</h2></div>
+  <div class="sec-head"><span class="num">11</span><h2>Тестування рівня</h2></div>
   <p class="lead">Тести на завершення рівня A1, A2, B1 і короткий загальний тест рівня для нових учнів. Роботи учнів ви перевіряєте в кабінеті (адмінці) кожного тесту.</p>
   <div class="grid">
     <div class="card"><h3>Тест A1</h3><p>Фінальний тест курсу A1 з письмовою та усною частиною.</p>
@@ -477,7 +508,7 @@ let level = "A1";
 function renderTabs(){
   document.getElementById("sylTabs").innerHTML = Object.keys(SYL).map(l =>
     `<button class="tab ${l===level?"on":""}" data-l="${l}">${l} · ${SYL[l].lessons.length} ур.</button>`).join("");
-  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { level = b.dataset.l; document.getElementById("sylQ").value=""; renderSyl(); renderTabs(); });
+  document.querySelectorAll("#sylTabs .tab").forEach(b => b.onclick = () => { level = b.dataset.l; document.getElementById("sylQ").value=""; renderSyl(); renderTabs(); });
 }
 function renderSyl(){
   const d = SYL[level], q = document.getElementById("sylQ").value.trim().toLowerCase();
@@ -536,6 +567,8 @@ document.getElementById("q").addEventListener("input", e => {
   fetch("/api/baza/events").then(r=>r.ok?r.json():[]).then(list=>{events=list;render();}).catch(()=>render());
   render();
 })();
+
+document.querySelectorAll("#rTabs .tab").forEach(b=>b.onclick=()=>{document.querySelectorAll("#rTabs .tab").forEach(x=>x.classList.toggle("on",x===b));document.querySelectorAll(".rp").forEach(p=>p.classList.toggle("hidden",p.dataset.r!==b.dataset.r));});
 document.getElementById("logout").onclick=async()=>{await fetch("/api/baza/logout",{method:"POST"});location.href="/baza/";};
 </script>
 </body>
