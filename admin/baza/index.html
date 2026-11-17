@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>База: доступ і події · Italica</title>
+<title>База: доступ, новини, події · Italica</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" />
 <style>
 *{box-sizing:border-box}
@@ -25,6 +25,13 @@ table.evt td{padding:4px}
 table.evt input,table.evt select,table.evt textarea{width:100%;padding:8px 9px;border-radius:8px;border:1.5px solid #e9e2d8;font:inherit;font-size:14px}
 table.evt textarea{min-height:38px;resize:vertical}
 table.evt .x{margin:0;padding:8px 10px;background:#fff;color:#c94c4c;border:1px solid #e9e2d8}
+.nw{border:1px solid #e9e2d8;border-radius:12px;padding:12px;margin:10px 0;display:grid;gap:8px}
+.nw .r{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.nw input,.nw textarea{padding:8px 10px;border-radius:8px;border:1.5px solid #e9e2d8;font:inherit;font-size:14px}
+.nw textarea{width:100%;min-height:110px;resize:vertical}
+.nw .t{flex:1;min-width:220px}
+.nw label{display:flex;gap:6px;align-items:center;font-size:13.5px;font-weight:600;margin:0}
+.nw .x{margin:0;padding:8px 10px;background:#fff;color:#c94c4c;border:1px solid #e9e2d8}
 .st{margin-top:12px;font-size:14px;font-weight:600}
 </style>
 </head>
@@ -40,6 +47,13 @@ table.evt .x{margin:0;padding:8px 10px;background:#fff;color:#c94c4c;border:1px 
     <button>Зберегти новий логін і пароль</button>
     <div class="st" id="st"></div>
   </form>
+</div>
+<div class="card" style="margin-top:18px">
+  <h1>📰 Новини</h1>
+  <p>Новини показуються на /baza у чорному блоці зверху. «Важливо» — закріплює новину вгорі. Посилання в тексті стають клікабельними самі.</p>
+  <div id="nwBody"></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px"><button type="button" id="nwAdd" style="background:#fff;color:#1a1a1a;border:1px solid #e9e2d8">+ Додати новину</button><button type="button" id="nwSave">Зберегти новини</button></div>
+  <div class="st" id="nwSt"></div>
 </div>
 <div class="card" style="margin-top:18px">
   <h1>🗓 Дайджест подій</h1>
@@ -81,6 +95,22 @@ document.getElementById("evSave").onclick=async()=>{
   else{st.style.color="#c94c4c";st.textContent="Помилка збереження";}
 };
 loadEv();
+
+function nwRow(n={id:"",date:new Date().toISOString().slice(0,10),author:"",pinned:false,title:"",text:""}){
+  const d=document.createElement("div");d.className="nw";d.dataset.id=n.id||("n"+Date.now());
+  d.innerHTML=`<div class="r"><input type="date" data-f="date" value="${escA(n.date)}"><input data-f="author" placeholder="Автор" value="${escA(n.author)}" style="width:140px"><input class="t" data-f="title" placeholder="Заголовок" value="${escA(n.title)}"><label><input type="checkbox" data-f="pinned" ${n.pinned?"checked":""}> важливо</label><button type="button" class="x">✕</button></div><textarea data-f="text" placeholder="Текст новини">${escA(n.text)}</textarea>`;
+  d.querySelector(".x").onclick=()=>{if(confirm("Видалити новину?"))d.remove();};
+  document.getElementById("nwBody").appendChild(d);
+}
+async function loadNw(){document.getElementById("nwBody").innerHTML="";(await (await fetch("/api/admin/baza/news")).json()).forEach(nwRow);}
+document.getElementById("nwAdd").onclick=()=>{nwRow();};
+document.getElementById("nwSave").onclick=async()=>{
+  const news=[...document.querySelectorAll("#nwBody .nw")].map(d=>{const o={id:d.dataset.id};d.querySelectorAll("[data-f]").forEach(el=>o[el.dataset.f]=el.type==="checkbox"?el.checked:el.value);return o;});
+  const st=document.getElementById("nwSt");
+  const r=await fetch("/api/admin/baza/news",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({news})});
+  if(r.ok){const sv=await r.json();st.style.color="#3f8f5f";st.textContent=`✓ Збережено новин: ${sv.length}`;loadNw();}else{st.style.color="#c94c4c";st.textContent="Помилка збереження";}
+};
+loadNw();
 </script>
 </body>
 </html>

@@ -13,6 +13,7 @@ const { gradeSubmission } = require("./grading");
 const store = require("./store");
 const baza = require("./baza-store");
 const bazaEvents = require("./baza-events");
+const bazaNews = require("./baza-news");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -280,6 +281,11 @@ app.get("/api/baza/events", (req, res) => {
   res.setHeader("Cache-Control", "no-store");
   res.json(bazaEvents.readAll());
 });
+app.get("/api/baza/news", (req, res) => {
+  if (!bazaOk(req)) return res.status(401).json({ error: "login" });
+  res.setHeader("Cache-Control", "no-store");
+  res.json(bazaNews.readAll());
+});
 app.get(["/baza", "/baza/", "/baza/index.html"], (req, res) => {
   res.setHeader("Cache-Control", "no-store");
   res.sendFile(path.join(__dirname, "baza", bazaOk(req) ? "index.html" : "login.html"));
@@ -306,6 +312,8 @@ app.put("/api/admin/baza/access", (req, res) => {
   res.json(baza.info());
 });
 
+app.get("/api/admin/baza/news", (req, res) => res.json(bazaNews.readAll()));
+app.put("/api/admin/baza/news", (req, res) => res.json(bazaNews.save((req.body || {}).news)));
 app.get("/api/admin/baza/events", (req, res) => res.json(bazaEvents.readAll()));
 app.put("/api/admin/baza/events", (req, res) => res.json(bazaEvents.save((req.body || {}).events)));
 

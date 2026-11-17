@@ -202,13 +202,29 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
 .offer{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line);font-size:13.5px;color:var(--muted)}
 .offer b{color:var(--brand-dark)}
 @media(max-width:640px){.rules-card{margin-left:0;padding:18px}}
+.news-sec{padding-top:34px}
+.news-box{background:#1F1A17;color:#F4EEE4;border-radius:24px;padding:28px 30px;position:relative;overflow:hidden}
+.news-box::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(229,73,30,.35),transparent 70%);pointer-events:none}
+.news-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.news-label{background:var(--brand);color:#fff;font-weight:800;font-size:12px;letter-spacing:.14em;padding:6px 10px;border-radius:4px}
+.news-box h2{color:#fff;font-family:Montserrat,sans-serif;font-weight:800;letter-spacing:-.01em}
+.news-list{display:grid;gap:14px;position:relative;z-index:1}
+.news-item{background:#2A2420;border:1px solid #3A322C;border-radius:16px;padding:18px 20px}
+.news-item.pinned{border-color:var(--brand)}
+.news-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:#B5A99C;font-weight:600;margin-bottom:6px}
+.news-pin{background:var(--brand);color:#fff;border-radius:4px;padding:2px 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.news-item h3{margin:0 0 8px;font-size:18px;color:#fff;font-weight:700}
+.news-text{font-size:15px;line-height:1.6;color:#E9E1D6;white-space:pre-line}
+.news-text a{color:#FF8A62;word-break:break-word}
+.news-empty{color:#B5A99C}
+@media(max-width:640px){.news-box{padding:22px 18px;border-radius:18px}}
 </style>
 </head>
 <body>
 <header class="top"><div class="top-in">
   <img src="/images/logo.png" alt="italica" />
   <nav>
-    <a href="#navchannya" style="background:var(--brand);color:#fff">📚 Навчання</a><a href="#dajdzhest" style="background:var(--brand-light);color:var(--brand-dark)">🗓 Дайджест</a><a href="#pravyla">Правила для учнів</a><a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#treker">Трекер</a><a href="#testy">Тестування</a>
+    <a href="#novyny" style="background:#1F1A17;color:#fff">📰 Новини</a><a href="#navchannya" style="background:var(--brand);color:#fff">📚 Навчання</a><a href="#dajdzhest" style="background:var(--brand-light);color:var(--brand-dark)">🗓 Дайджест</a><a href="#pravyla">Правила для учнів</a><a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#treker">Трекер</a><a href="#testy">Тестування</a>
   </nav>
   <button id="logout" style="flex:0 0 auto;font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;cursor:pointer">Вийти</button>
 </div></header>
@@ -229,6 +245,13 @@ footer::before{content:"";display:block;width:60px;height:2px;background:var(--b
     <ul><li>Не надсилати підручники учням і не передавати третім особам.</li><li>Не поширювати доступ до готових матеріалів / силабусів будь-кому, окрім учнів нашого простору.</li><li>Не використовувати матеріали поза роботою в Італіці.</li></ul>
     <p style="margin:8px 0 0">Можна використовувати власні авторські матеріали, якщо вони відповідають рамкам Італіки.</p>
   </div>
+
+<section id="novyny" class="news-sec" data-search="новини оголошення воркшоп secret santa сікрет санта">
+  <div class="news-box">
+    <div class="news-head"><span class="news-label">NEWS</span><h2>Новини</h2></div>
+    <div class="news-list" id="newsList"><div class="news-empty">Завантаження…</div></div>
+  </div>
+</section>
 
 <section id="navchannya" data-search="бібліотека навчань навчання методика планування фідбек коучинг підлітки групове голос ші miro перший урок вправи">
   <div class="sec-head"><span class="num">1</span><h2>Бібліотека навчань</h2></div>
@@ -569,6 +592,16 @@ document.getElementById("q").addEventListener("input", e => {
 })();
 
 document.querySelectorAll("#rTabs .tab").forEach(b=>b.onclick=()=>{document.querySelectorAll("#rTabs .tab").forEach(x=>x.classList.toggle("on",x===b));document.querySelectorAll(".rp").forEach(p=>p.classList.toggle("hidden",p.dataset.r!==b.dataset.r));});
+
+// ---------- Новини ----------
+(function(){
+  const MG=["січня","лютого","березня","квітня","травня","червня","липня","серпня","вересня","жовтня","листопада","грудня"];
+  const fd=d=>{const x=new Date(d+"T12:00");return isNaN(x)?"":`${x.getDate()} ${MG[x.getMonth()]} ${x.getFullYear()}`;};
+  const link=t=>esc(t).replace(/(https?:\/\/[^\s<]+)/g,u=>{let label=u.replace(/^https?:\/\/(www\.)?/,"").split(/[?#]/)[0];if(/docs\.google\.com\/forms/.test(u))label="Відкрити форму";else if(/instagram\.com\/([^/?#]+)/.test(u))label="@"+u.match(/instagram\.com\/([^/?#]+)/)[1];else if(/zoom\.us/.test(u))label="Відкрити Zoom";return `<a href="${u}" target="_blank" rel="noopener">${label.length>48?label.slice(0,46)+"…":label} ↗</a>`;});
+  fetch("/api/baza/news").then(r=>r.ok?r.json():[]).then(list=>{
+    document.getElementById("newsList").innerHTML=list.length?list.map(n=>`<article class="news-item ${n.pinned?"pinned":""}"><div class="news-meta">${n.pinned?'<span class="news-pin">важливо</span>':""}<span>${fd(n.date)}</span>${n.author?`<span>· ${esc(n.author)}</span>`:""}</div>${n.title?`<h3>${esc(n.title)}</h3>`:""}${n.text?`<div class="news-text">${link(n.text)}</div>`:""}</article>`).join(""):`<div class="news-empty">Поки новин немає.</div>`;
+  }).catch(()=>{document.getElementById("newsList").innerHTML='<div class="news-empty">Не вдалося завантажити новини.</div>';});
+})();
 document.getElementById("logout").onclick=async()=>{await fetch("/api/baza/logout",{method:"POST"});location.href="/baza/";};
 </script>
 </body>
