@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Доступ до бази · Italica</title>
+<title>База: доступ і події · Italica</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" />
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Montserrat,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#faf6f0;color:#1a1a1a}
 .bar{background:#fff;border-bottom:1px solid #e9e2d8;padding:14px 24px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
 .bar b{font-size:16px}.bar a{color:#c25527;font-weight:600;text-decoration:none;font-size:14px}
-.wrap{max-width:640px;margin:28px auto;padding:0 20px 60px}
+.wrap{max-width:980px;margin:28px auto;padding:0 20px 60px}
 .card{background:#fff;border:1px solid #e9e2d8;border-radius:16px;padding:24px 26px}
 h1{font-size:24px;margin:0 0 8px}p{color:#5c5750;margin:0 0 14px;font-size:14.5px;line-height:1.55}
 .cur{background:#faf6f0;border-radius:12px;padding:12px 16px;font-size:14.5px;margin-bottom:20px}
@@ -19,6 +19,12 @@ input{width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid #e9e2d8
 input:focus{outline:none;border-color:#c25527}
 button{margin-top:18px;font:inherit;font-weight:700;font-size:15px;padding:12px 18px;border-radius:10px;border:none;background:#c25527;color:#fff;cursor:pointer}
 button:hover{background:#a4451e}
+table.evt{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+table.evt th{text-align:left;color:#767066;font-size:12.5px;font-weight:600;padding:6px 4px}
+table.evt td{padding:4px}
+table.evt input,table.evt select,table.evt textarea{width:100%;padding:8px 9px;border-radius:8px;border:1.5px solid #e9e2d8;font:inherit;font-size:14px}
+table.evt textarea{min-height:38px;resize:vertical}
+table.evt .x{margin:0;padding:8px 10px;background:#fff;color:#c94c4c;border:1px solid #e9e2d8}
 .st{margin-top:12px;font-size:14px;font-weight:600}
 </style>
 </head>
@@ -34,7 +40,15 @@ button:hover{background:#a4451e}
     <button>Зберегти новий логін і пароль</button>
     <div class="st" id="st"></div>
   </form>
-</div></main>
+</div>
+<div class="card" style="margin-top:18px">
+  <h1>🗓 Дайджест подій</h1>
+  <p>Ці події бачать викладачі в календарі на /baza. Щомісяця додайте нові рядки, змініть потрібні й натисніть «Зберегти події». Старі можна не видаляти — вони просто залишаться в минулих місяцях.</p>
+  <div style="overflow-x:auto"><table class="evt"><thead><tr><th>Дата</th><th>Час</th><th>Тип</th><th>Назва</th><th>Опис (необов'язково)</th><th></th></tr></thead><tbody id="evBody"></tbody></table></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px"><button type="button" id="evAdd" style="background:#fff;color:#1a1a1a;border:1px solid #e9e2d8">+ Додати подію</button><button type="button" id="evSave">Зберегти події</button></div>
+  <div class="st" id="evSt"></div>
+</div>
+</main>
 <script>
 const fmt=d=>d?new Date(d).toLocaleString("uk-UA",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}):"ще не змінювався";
 async function load(){const r=await fetch("/api/admin/baza/access");const i=await r.json();document.getElementById("cur").innerHTML=`Поточний логін: <b>${i.user.replace(/</g,"&lt;")}</b><br>Пароль востаннє змінено: ${fmt(i.changedAt)}`;document.getElementById("u").value=i.user;}
@@ -44,6 +58,29 @@ document.getElementById("f").onsubmit=async e=>{e.preventDefault();const st=docu
   if(r.ok){st.style.color="#3f8f5f";st.textContent="✓ Збережено. Надішліть новий пароль викладачам.";document.getElementById("p").value="";load();}
   else{st.style.color="#c94c4c";st.textContent=(await r.json()).error||"Помилка";}};
 load();
+
+const T={workshop:"воркшоп",social:"зустріч команди",off:"вихідний",other:"інше"};
+const escA=v=>String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+function row(e={date:"",time:"",type:"workshop",title:"",details:""}){
+  const tr=document.createElement("tr");
+  tr.innerHTML=`<td style="width:150px"><input type="date" data-f="date" value="${escA(e.date)}"></td><td style="width:100px"><input type="time" data-f="time" value="${escA(e.time)}"></td>
+  <td style="width:150px"><select data-f="type">${Object.entries(T).map(([k,v])=>`<option value="${k}" ${e.type===k?"selected":""}>${v}</option>`).join("")}</select></td>
+  <td><input data-f="title" value="${escA(e.title)}" placeholder="Назва події"></td><td><textarea data-f="details" placeholder="Опис">${escA(e.details)}</textarea></td>
+  <td style="width:44px"><button type="button" class="x" title="Видалити">✕</button></td>`;
+  tr.querySelector(".x").onclick=()=>tr.remove();
+  document.getElementById("evBody").appendChild(tr);
+}
+async function loadEv(){document.getElementById("evBody").innerHTML="";(await (await fetch("/api/admin/baza/events")).json()).forEach(row);}
+document.getElementById("evAdd").onclick=()=>row();
+document.getElementById("evSave").onclick=async()=>{
+  const events=[...document.querySelectorAll("#evBody tr")].map(tr=>Object.fromEntries([...tr.querySelectorAll("[data-f]")].map(el=>[el.dataset.f,el.value])));
+  const st=document.getElementById("evSt");
+  const bad=events.filter(e=>!e.date||!e.title.trim()).length;
+  const r=await fetch("/api/admin/baza/events",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({events})});
+  if(r.ok){const saved=await r.json();st.style.color="#3f8f5f";st.textContent=`✓ Збережено подій: ${saved.length}`+(bad?` (пропущено ${bad} без дати або назви)`:"");loadEv();}
+  else{st.style.color="#c94c4c";st.textContent="Помилка збереження";}
+};
+loadEv();
 </script>
 </body>
 </html>

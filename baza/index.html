@@ -80,6 +80,37 @@ h2{font-size:24px;margin:0;font-weight:800}
 .arrow{color:var(--muted)}
 h3.sub{margin:22px 0 10px 46px;font-size:15px;text-transform:uppercase;letter-spacing:.05em;color:var(--brand-dark)}
 @media(max-width:640px){h3.sub{margin-left:0}}
+.cal{margin-left:46px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+.cal-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream);border-bottom:1px solid var(--line)}
+.cal-title{font-weight:800;font-size:18px;text-transform:capitalize}
+.cal-nav{border:1px solid var(--line);background:#fff;border-radius:10px;width:38px;height:38px;font:inherit;font-size:18px;cursor:pointer}
+.cal-nav:hover{border-color:var(--brand);color:var(--brand)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-dow{padding:8px;text-align:center;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--line)}
+.cal-day{min-height:92px;padding:6px 7px;border-right:1px solid #f1ece5;border-bottom:1px solid #f1ece5;font-size:12px;position:relative}
+.cal-day:nth-child(7n){border-right:none}
+.cal-day.blank{background:#fcfaf7}
+.cal-day .d{font-weight:700;font-size:13px;color:#5c5750}
+.cal-day.today .d{background:var(--brand);color:#fff;border-radius:999px;padding:1px 7px}
+.cal-day.offday{background:#fdf1f1}
+.ev{display:block;margin-top:4px;padding:3px 6px;border-radius:6px;font-weight:600;line-height:1.25;font-size:11.5px;cursor:default}
+.ev.workshop{background:var(--brand-light);color:var(--brand-dark)}
+.ev.social{background:#eceaf6;color:#5a4f9a}
+.ev.off{background:var(--red-light);color:var(--red)}
+.ev.other{background:#e4f3ea;color:var(--green)}
+.cal-legend{display:flex;gap:16px;flex-wrap:wrap;padding:10px 16px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.dot.workshop{background:var(--brand)}.dot.social{background:#7b6fc4}.dot.off{background:var(--red)}.dot.other{background:var(--green)}
+.ev-list{margin:16px 0 0 46px;display:grid;gap:10px}
+.ev-item{display:grid;grid-template-columns:74px 1fr;gap:14px;align-items:start;border:1px solid var(--line);border-radius:14px;padding:12px 16px;background:#fff}
+.ev-item.past{opacity:.55}
+.ev-date{text-align:center;border-radius:10px;padding:6px 4px;background:var(--cream)}
+.ev-date b{display:block;font-size:22px;line-height:1.1}
+.ev-date span{font-size:11.5px;color:var(--muted);text-transform:uppercase;font-weight:700}
+.ev-item h4{margin:0;font-size:15.5px}
+.ev-meta{font-size:13px;color:var(--muted);font-weight:600;margin-top:2px}
+.ev-item p{margin:4px 0 0;font-size:14px;color:#3b3833}
+@media(max-width:640px){.cal,.ev-list{margin-left:0}.cal-day{min-height:58px;padding:4px}.ev{font-size:0;padding:0;height:6px;margin-top:3px}.cal-dow{font-size:10px;padding:6px 2px}}
 .tabs{display:flex;gap:6px;margin:0 0 14px 46px;flex-wrap:wrap}
 .tab{border:1px solid var(--line);background:#fff;font:inherit;font-weight:700;padding:8px 16px;border-radius:999px;cursor:pointer}
 .tab.on{background:var(--brand);border-color:var(--brand);color:#fff}
@@ -107,7 +138,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
 <header class="top"><div class="top-in">
   <img src="/images/logo.png" alt="italica" />
   <nav>
-    <a href="#navchannya" style="background:var(--brand);color:#fff">📚 Навчання</a><a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#treker">Трекер</a><a href="#testy">Тестування</a>
+    <a href="#navchannya" style="background:var(--brand);color:#fff">📚 Навчання</a><a href="#dajdzhest" style="background:var(--brand-light);color:var(--brand-dark)">🗓 Дайджест</a><a href="#pidruchnyky">Підручники</a><a href="#uroky">Готові уроки</a><a href="#sylabusy">Силабуси</a><a href="#shablony">Шаблони</a><a href="#khrystyna">Скарб Христини</a><a href="#rozrobky">Розробки</a><a href="#treker">Трекер</a><a href="#testy">Тестування</a>
   </nav>
   <button id="logout" style="flex:0 0 auto;font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;cursor:pointer">Вийти</button>
 </div></header>
@@ -213,8 +244,23 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
     </div>
   </section>
 
+<section id="dajdzhest" data-search="дайджест подій календар воркшоп аперитив вихідні події місяць">
+  <div class="sec-head"><span class="num">2</span><h2>Дайджест подій</h2></div>
+  <p class="lead">Воркшопи, зустрічі команди й вихідні. Календар оновлюється щомісяця.</p>
+  <div class="cal">
+    <div class="cal-head">
+      <button class="cal-nav" id="calPrev" aria-label="Попередній місяць">←</button>
+      <div class="cal-title" id="calTitle"></div>
+      <button class="cal-nav" id="calNext" aria-label="Наступний місяць">→</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-legend"><span><i class="dot workshop"></i>воркшоп</span><span><i class="dot social"></i>зустріч команди</span><span><i class="dot off"></i>вихідний</span><span><i class="dot other"></i>інше</span></div>
+  </div>
+  <div class="ev-list" id="evList"></div>
+</section>
+
 <section id="pidruchnyky" data-search="підручники база blinklearning граматика лексика аудіо вправи">
-  <div class="sec-head"><span class="num">2</span><h2>База підручників</h2></div>
+  <div class="sec-head"><span class="num">3</span><h2>База підручників</h2></div>
   <p class="lead">Наша внутрішня база підручників для підготовки та побудови уроків.</p>
   <div class="grid">
     <div class="card">
@@ -233,7 +279,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
 </section>
 
 <section id="uroky" data-search="готові уроки курс a1 a2 b1 miro дошка основний додатковий запасний">
-  <div class="sec-head"><span class="num">3</span><h2>Готові уроки</h2></div>
+  <div class="sec-head"><span class="num">4</span><h2>Готові уроки</h2></div>
   <p class="lead">Ми поступово створюємо власну базу готових уроків для різних рівнів. Для A1 є два курси: основний і додатковий — для нових учнів пріоритет основний.</p>
   <div class="grid">
     <div class="card">
@@ -269,7 +315,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
 </section>
 
 <section id="sylabusy" data-search="силабуси програма теми цілі a1 a2 b1 b2 додаткові матеріали">
-  <div class="sec-head"><span class="num">4</span><h2>Силабуси</h2></div>
+  <div class="sec-head"><span class="num">5</span><h2>Силабуси</h2></div>
   <p class="lead">Програма кожного рівня: теми й цілі уроків, навички, цільова лексика. Нижче можна швидко переглянути теми, а повну таблицю відкрити в Google Sheets.</p>
   <div class="tabs" id="sylTabs"></div>
   <div class="syl">
@@ -283,7 +329,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
 </section>
 
 <section id="shablony" data-search="банк шаблонів miro оформлення дошки">
-  <div class="sec-head"><span class="num">5</span><h2>Банк шаблонів Miro</h2></div>
+  <div class="sec-head"><span class="num">6</span><h2>Банк шаблонів Miro</h2></div>
   <p class="lead">Шаблони для оформлення уроків і дошок у Miro.</p>
   <div class="grid"><div class="card">
     <h3>🎨 Банк шаблонів</h3>
@@ -294,7 +340,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
 </section>
 
 <section id="khrystyna" data-search="скарб христини автентичні матеріали ідеї уроки">
-  <div class="sec-head"><span class="num">6</span><h2>«Скарб Христини»</h2></div>
+  <div class="sec-head"><span class="num">7</span><h2>«Скарб Христини»</h2></div>
   <p class="lead">Авторські матеріали маестри Христини. Христина особливо любить створювати автентичні уроки, тож ми зберігаємо її розробки як окрему базу ідей.</p>
   <div class="grid"><div class="card">
     <h3>💎 Скарб Христини</h3>
@@ -305,7 +351,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
 </section>
 
 <section id="rozrobky" data-search="розробки готових уроків автентика методичні">
-  <div class="sec-head"><span class="num">7</span><h2>Розробки готових уроків</h2></div>
+  <div class="sec-head"><span class="num">8</span><h2>Розробки готових уроків</h2></div>
   <p class="lead">Методичні розробки й автентичні матеріали для створення уроків за структурою Італіки.</p>
   <div class="grid"><div class="card">
     <h3>🛠 Розробки (автентика)</h3>
@@ -315,7 +361,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
 </section>
 
 <section id="treker" data-search="трекер прогресу учня шаблон дошка">
-  <div class="sec-head"><span class="num">8</span><h2>Трекер прогресу учня</h2></div>
+  <div class="sec-head"><span class="num">9</span><h2>Трекер прогресу учня</h2></div>
   <p class="lead">Трекер — <b>обов'язкова</b> частина дошки кожного учня.</p>
   <div class="grid"><div class="card">
     <h3>📈 Шаблон трекера</h3>
@@ -327,7 +373,7 @@ footer{max-width:1080px;margin:0 auto;padding:0 22px 40px;color:var(--muted);fon
 </section>
 
 <section id="testy" data-search="тестування тест a1 a2 b1 рівень сертифікат перевірка адмінка 75">
-  <div class="sec-head"><span class="num">9</span><h2>Тестування рівня</h2></div>
+  <div class="sec-head"><span class="num">10</span><h2>Тестування рівня</h2></div>
   <p class="lead">Тести на завершення рівня A1, A2, B1 і короткий загальний тест рівня для нових учнів. Роботи учнів ви перевіряєте в кабінеті (адмінці) кожного тесту.</p>
   <div class="grid">
     <div class="card"><h3>Тест A1</h3><p>Фінальний тест курсу A1 з письмовою та усною частиною.</p>
@@ -403,6 +449,38 @@ document.getElementById("q").addEventListener("input", e => {
   });
   document.getElementById("noResult").classList.toggle("hidden", shown>0);
 });
+
+// ---------- Дайджест подій ----------
+(function(){
+  const MONTHS=["січень","лютий","березень","квітень","травень","червень","липень","серпень","вересень","жовтень","листопад","грудень"];
+  const MONTHS_G=["січ","лют","бер","кві","тра","чер","лип","сер","вер","жов","лис","гру"];
+  const DOW=["пн","вт","ср","чт","пт","сб","нд"];
+  const TYPE={workshop:"воркшоп",social:"зустріч команди",off:"вихідний",other:"подія"};
+  let events=[], cur=new Date(); cur.setDate(1);
+  const pad=n=>String(n).padStart(2,"0");
+  const key=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const todayKey=key(new Date());
+  function render(){
+    const y=cur.getFullYear(), m=cur.getMonth();
+    document.getElementById("calTitle").textContent=`${MONTHS[m]} ${y}`;
+    const first=(new Date(y,m,1).getDay()+6)%7, days=new Date(y,m+1,0).getDate();
+    let html=DOW.map(d=>`<div class="cal-dow">${d}</div>`).join("");
+    for(let i=0;i<first;i++) html+=`<div class="cal-day blank"></div>`;
+    for(let d=1;d<=days;d++){
+      const k=`${y}-${pad(m+1)}-${pad(d)}`, evs=events.filter(e=>e.date===k);
+      const off=evs.some(e=>e.type==="off");
+      html+=`<div class="cal-day ${k===todayKey?"today":""} ${off?"offday":""}"><span class="d">${d}</span>${evs.map(e=>`<span class="ev ${e.type}" title="${esc(e.title+(e.details?" — "+e.details:""))}">${e.time?esc(e.time)+" ":""}${esc(e.title)}</span>`).join("")}</div>`;
+    }
+    const tail=(7-((first+days)%7))%7; for(let i=0;i<tail;i++) html+=`<div class="cal-day blank"></div>`;
+    document.getElementById("calGrid").innerHTML=html;
+    const month=events.filter(e=>e.date.startsWith(`${y}-${pad(m+1)}`));
+    document.getElementById("evList").innerHTML=month.length?month.map(e=>{const dd=new Date(e.date+"T12:00");return `<div class="ev-item ${e.date<todayKey?"past":""}"><div class="ev-date"><b>${dd.getDate()}</b><span>${MONTHS_G[dd.getMonth()]}</span></div><div><h4>${esc(e.title)}</h4><div class="ev-meta">${e.time?esc(e.time)+" · ":""}${TYPE[e.type]||"подія"}</div>${e.details?`<p>${esc(e.details)}</p>`:""}</div></div>`}).join(""):`<div class="empty" style="border:1px dashed var(--line);border-radius:14px">У цьому місяці подій поки немає.</div>`;
+  }
+  document.getElementById("calPrev").onclick=()=>{cur.setMonth(cur.getMonth()-1);render();};
+  document.getElementById("calNext").onclick=()=>{cur.setMonth(cur.getMonth()+1);render();};
+  fetch("/api/baza/events").then(r=>r.ok?r.json():[]).then(list=>{events=list;render();}).catch(()=>render());
+  render();
+})();
 document.getElementById("logout").onclick=async()=>{await fetch("/api/baza/logout",{method:"POST"});location.href="/baza/";};
 </script>
 </body>
